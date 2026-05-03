@@ -18,6 +18,7 @@ import EditTermsConditions from "../page/EditTermsConditions/EditTermsConditions
 import Notification from "../component/Main/Notification/Notification";
 import EarningsPage from "../page/EarningsPage/EarningsPage";
 import UsersPage from "../page/Users/UsersPage";
+import ListingsPage from "../page/ListingsPage/ListingsPage";
 
 const router = createBrowserRouter([
   {
@@ -40,7 +41,11 @@ const router = createBrowserRouter([
       {
         path: "Earnings",
         element: <EarningsPage />,
-      },   
+      },
+      {
+        path: "listings",
+        element: <ListingsPage />
+      },  
       {
         path: "personal-info",
         element: <PersonalInformationPage />,

@@ -1,4 +1,3 @@
-import signinImage from "../../../assets/auth/signIn.png";
 import { Link, useNavigate } from "react-router-dom";
 import { Form, Checkbox } from "antd";
 import { HiOutlineLockClosed, HiOutlineMail } from "react-icons/hi";
@@ -8,18 +7,19 @@ import { useLoginMutation } from "../../../redux/features/auth/authApi";
 import { toast } from "sonner";
 import { useDispatch } from "react-redux";
 import { loggedUser } from "../../../redux/features/auth/authSlice";
+import logo from "/logo/logo.png";
 
 const SignIn = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [login, { isLoading }] = useLoginMutation();
+
   const handleSubmit = async (values) => {
     const { email, password } = values;
     try {
       const res = await login({ email, password });
       if (res.error) {
         toast.error(res.error.data.message);
-        console.log(res.error.data.message);
       }
       if (res.data) {
         dispatch(
@@ -37,51 +37,44 @@ const SignIn = () => {
   };
 
   return (
-    <div className="w-full  h-full md:h-screen md:flex justify-around ">
-  
-    <div className="w-full max-w-7xl mx-auto rounded-md h-[70%] md:my-28 grid grid-cols-1 md:grid-cols-2 place-content-center px-5 py-10 gap-8  md:mx-10">
-      <div className="flex justify-center">
-        <img
-          src={signinImage}
-          className="w-full h-full mx-auto"
-          alt="Sign in illustration"
-        />
-      </div>
-      <div className="mt-16 px-8">
-        <div className="mb-8">
-          <h1 className="font-semibold text-3xl text-gray-800">
-            Hello, Welcome!
-          </h1>
-          <p className="text-gray-500">
-            Please Enter Your Details Below to Continue
+    <div
+      className="min-h-screen w-full flex items-center justify-center bg-[linear-gradient(180deg,_#DEFFF5_-61.52%,_#FFFFFF_100%)]"
+    >
+      <div
+        className="bg-white rounded-2xl shadow-md p-5 w-full"
+        style={{ maxWidth: "420px" }}
+      >
+        {/* Logo */}
+        <div className="flex flex-col items-center mb-2">
+          <img className="w-[80px] h-[80px]" src={logo} alt="image" />
+        </div>
+
+        {/* Heading */}
+        <div className="text-center mb-2">
+          <h1 className="text-xl font-bold text-gray-900">Login to Account</h1>
+          <p className="text-sm text-gray-400 mt-1">
+            Please enter your email and password to continue
           </p>
         </div>
+
+        {/* Form */}
         <Form
           layout="vertical"
           onFinish={handleSubmit}
-          className="space-y-4"
-          initialValues={{
-            remember: true,
-          }}
+          initialValues={{ remember: true }}
         >
           <Form.Item
-            label="Email"
+            label="Email address"
             name="email"
             rules={[
-              {
-                required: true,
-                message: "Please input your email!",
-              },
-              {
-                type: "email",
-                message: "The input is not a valid email!",
-              },
+              { required: true, message: "Please input your email!" },
+              { type: "email", message: "The input is not a valid email!" },
             ]}
           >
             <CustomInput
               type="email"
               icon={HiOutlineMail}
-              placeholder={"Enter Email"}
+              placeholder="esteban_schiller@gmail.com"
             />
           </Form.Item>
 
@@ -89,37 +82,53 @@ const SignIn = () => {
             label="Password"
             name="password"
             rules={[
-              {
-                required: true,
-                message: "Please input your password!",
-              },
+              { required: true, message: "Please input your password!" },
             ]}
           >
             <CustomInput
               type="password"
               icon={HiOutlineLockClosed}
-              placeholder={"Enter password"}
+              placeholder="••••••••••"
               isPassword
             />
           </Form.Item>
 
-          <div className="flex justify-between items-center">
+          {/* Remember + Forgot */}
+          <div className="flex justify-between items-center mb-4">
             <Form.Item name="remember" valuePropName="checked" noStyle>
-              <Checkbox>Remember me</Checkbox>
+              <Checkbox >
+                <span className="text-sm text-gray-500">Remember Password</span>
+              </Checkbox>
             </Form.Item>
-            <Link to="/auth/forget-password" className="underline">
-              Forgot password?
+            <Link
+              to="/auth/forget-password"
+              className="text-sm text-gray-700 hover:underline"
+            >
+              Forget Password?
             </Link>
           </div>
 
+          {/* Sign In Button */}
           <Form.Item>
-            <CustomButton loading={isLoading} className="w-full" border={true}>
-              Sign In
+            <CustomButton
+              loading={isLoading}
+              className="w-full"
+              border={true}
+              style={{
+                backgroundColor: "#1a5c3a",
+                borderColor: "#1a5c3a",
+                color: "white",
+                height: "44px",
+                borderRadius: "8px",
+                fontWeight: 600,
+                fontSize: "15px",
+              }}
+            >
+              Sign in
             </CustomButton>
           </Form.Item>
         </Form>
       </div>
-    </div>
     </div>
   );
 };

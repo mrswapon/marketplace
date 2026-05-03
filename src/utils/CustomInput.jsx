@@ -21,21 +21,21 @@ const CustomInput = ({
           <Input.TextArea
             placeholder={placeholder || "Enter text"} // Dynamic placeholder for TextArea
             rows={rows} // Number of rows for TextArea
-            className={`w-full px-4 py-2 text-[16px] border border-[#FF8133] text-[#0a0a0a] rounded-lg resize-none  ${className}`} // Custom styling
+            className={`w-full px-4 py-2 text-[16px] border border-[#0F3D2E] text-[#0a0a0a] rounded-lg resize-none  ${className}`} // Custom styling
             {...rest} // Additional props
           />
         ) : isPassword ? (
           <Input.Password
-            prefix={Icon && <Icon className="text-[#0a0a0a] text-xl" />} // Dynamic icon
+            prefix={Icon && <Icon className="text-[#4C7E95] text-xl" />} // Dynamic icon
             placeholder={placeholder || "Enter password"} // Dynamic placeholder for Password
-            className={`w-full px-4 py-2 text-[16px] border border-[#FF8133] text-[#0a0a0a] rounded-lg ${className}`}
+            className={`w-full px-4 py-2 text-[16px] border border-[#0F3D2E] text-[#0a0a0a] rounded-lg ${className}`}
             {...rest} // Additional props
           />
         ) : isFile ? ( // Render file input if isFile is true
           <input
             type="file"
             name={name} // Add the name attribute to the file input
-            className={`w-full px-4 py-2 text-[16px] border border-[#FF8133] text-[#0a0a0a] rounded-lg ${className}`} // Custom styling
+            className={`w-full px-4 py-2 text-[16px] border border-[#0F3D2E] text-[#0a0a0a] rounded-lg ${className}`} // Custom styling
             accept="image/*"
             {...rest} // Additional props
           />
@@ -43,7 +43,7 @@ const CustomInput = ({
           <Input
             prefix={Icon && <Icon className="text-[#4C7E95] text-xl" />} // Dynamic icon
             placeholder={placeholder || "Enter value"} // Dynamic placeholder
-            className={`w-full px-4 py-2 text-[16px] border border-[#FF8133] text-[#000000] rounded-lg ${className}`}
+            className={`w-full px-4 py-2 text-[16px] border border-[#0F3D2E] text-[#000000] rounded-lg ${className}`}
             type={type} // Default input type
             {...rest} // Additional props
           />

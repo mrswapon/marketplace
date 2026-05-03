@@ -1,164 +1,257 @@
 import { useState } from "react";
-import { ConfigProvider, Modal, Space, Table } from "antd";
-import moment from "moment";
-import { IoMdInformationCircleOutline } from "react-icons/io";
+import { ConfigProvider, Modal, Space, Table, Button } from "antd";
+import { AiOutlineEye } from "react-icons/ai";
+import { FiCheck, FiX } from "react-icons/fi";
+import { IoInformationCircleOutline } from "react-icons/io5";
 
-const RecentTransactions = () => {
+const RecentListings = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedTransaction, setSelectedTransaction] = useState(null);
+  const [selectedListing, setSelectedListing] = useState(null);
+  const [activeTab, setActiveTab] = useState("all");
 
-  const showModal = (transaction) => {
-    setSelectedTransaction(transaction);
+  const showModal = (record) => {
+    setSelectedListing(record);
     setIsModalVisible(true);
   };
 
   const handleCancel = () => {
     setIsModalVisible(false);
-    setSelectedTransaction(null);
+    setSelectedListing(null);
   };
 
   const data = [
     {
       id: 1,
-      accountID: 2010,
-      image: { url: "https://randomuser.me/api/portraits/men/1.jpg" },
-      transactionId: "TRX001",
-      firstName: "John",
-      lastName: "Doe",
-      gender: "Male",
-      email: "doe@example.com",
-      phone: "123-456-7890",
-      date: "2023-11-01",
+      name: "2023 Mercedes EQE",
+      image: "https://images.unsplash.com/photo-1617654112368-307921291f42?w=80&q=80",
+      category: "Cars",
+      seller: "Euro Motors",
+      price: "$72,000",
+      status: "Approved",
     },
     {
       id: 2,
-      accountID: 2010,
-      image: { url: "https://randomuser.me/api/portraits/women/1.jpg" },
-      transactionId: "TRX002",
-      firstName: "Jane",
-      lastName: "Smith",
-      gender: "Female",
-      email: "th@example.com",
-      phone: "987-654-3210",
-      date: "2023-10-25",
+      name: "Downtown Loft",
+      image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=80&q=80",
+      category: "Properties",
+      seller: "Skyline Realty",
+      price: "$450k",
+      status: "Pending",
     },
     {
       id: 3,
-      accountID: 2020,
-      image: { url: "https://randomuser.me/api/portraits/men/2.jpg" },
-      transactionId: "TRX003",
-      firstName: "Mike",
-      lastName: "Brown",
-      gender: "Male",
-      email: "mikeb@example.com",
-      phone: "555-123-4567",
-      date: "2023-10-20",
+      name: "MacBook Pro M3",
+      image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=80&q=80",
+      category: "Electronics",
+      seller: "Tech Hub",
+      price: "$2,499",
+      status: "Approved",
     },
     {
       id: 4,
-      accountID: 2021,
-      image: { url: "https://randomuser.me/api/portraits/women/2.jpg" },
-      transactionId: "TRX004",
-      firstName: "Emily",
-      lastName: "Davis",
-      gender: "Female",
-      email: "emilyd@example.com",
-      phone: "444-555-6666",
-      date: "2023-11-05",
-    },
-    {
-      id: 5,
-      accountID: 2022,
-      image: { url: "https://randomuser.me/api/portraits/men/3.jpg" },
-      transactionId: "TRX005",
-      firstName: "Chris",
-      lastName: "Wilson",
-      gender: "Male",
-      email: "chrisw@example.com",
-      phone: "111-222-3333",
-      date: "2023-11-10",
+      name: "Rolex Datejust",
+      image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=80&q=80",
+      category: "Electronics",
+      seller: "Watch World",
+      price: "$12,400",
+      status: "Rejected",
     },
   ];
-  
+
+  const statusBadge = (status) => {
+    const styles = {
+      Approved: { background: "#e6f9f0", color: "#22c55e" },
+      Pending:  { background: "#fff7e6", color: "#f59e0b" },
+      Rejected: { background: "#fee2e2", color: "#ef4444" },
+    };
+    return (
+      <span
+        style={{
+          ...styles[status],
+          padding: "3px 14px",
+          borderRadius: 20,
+          fontWeight: 600,
+          fontSize: 12,
+        }}
+      >
+        {status}
+      </span>
+    );
+  };
+
+  const renderActions = (record) => {
+    if (record.status === "Pending") {
+      return (
+        <Space size="middle">
+          <FiCheck
+            style={{ fontSize: 18, cursor: "pointer", color: "#aaa" }}
+            className="hover:text-green-500 transition-colors"
+            title="Approve"
+          />
+          <FiX
+            style={{ fontSize: 18, cursor: "pointer", color: "#aaa" }}
+            className="hover:text-red-500 transition-colors"
+            title="Reject"
+          />
+        </Space>
+      );
+    }
+    if (record.status === "Rejected") {
+      return (
+        <IoInformationCircleOutline
+          onClick={() => showModal(record)}
+          style={{ fontSize: 20, cursor: "pointer", color: "#aaa" }}
+          title="Info"
+        />
+      );
+    }
+    // Approved
+    return (
+      <AiOutlineEye
+        onClick={() => showModal(record)}
+        style={{ fontSize: 20, cursor: "pointer", color: "#aaa" }}
+        title="View"
+      />
+    );
+  };
 
   const columns = [
     {
-      title: "#SL",
-      dataIndex: "si",
-      key: "si",
-      sorter: (a, b) => a.si - b.si, // Sorting by serial number (numeric)
-    },
-    {
-      title: "First Name",
-      dataIndex: "firstName",
-      key: "firstName",
-      sorter: (a, b) => a.firstName?.localeCompare(b.firstName), // Sorting alphabetically
-      render: (text) => text || "N/A", // Fallback for missing data
-    },
-    {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
-      sorter: (a, b) => a.email?.localeCompare(b.email), // Sorting alphabetically
-      render: (text) => text || "N/A", // Fallback for missing data
-    },
-    {
-      title: "Phone",
-      dataIndex: "phone",
-      key: "phone",
-      sorter: (a, b) => a.phone?.localeCompare(b.phone), // Sorting alphabetically
-      render: (text) => text || "N/A", // Fallback for missing data
-    },
-    {
-      title: "Joined Date Time",
-      dataIndex: "date",
-      key: "date",
-      sorter: (a, b) => moment(a.date).unix() - moment(b.date).unix(), // Sorting by Unix timestamp
-      render: (text) => (text ? moment(text).format("DD MMM YYYY") : "N/A"), // Fallback for missing date
-      responsive: ["md"],
-    },
-    {
-      title: "Action",
-      key: "action",
-      render: (_, record) => (
-        <Space size="middle">
-          <IoMdInformationCircleOutline 
-            onClick={() => showModal(record)}
-            style={{ fontSize: "20px", cursor: "pointer" }}
-            className="text-[#000]"
+      title: "NAME",
+      dataIndex: "name",
+      key: "name",
+      render: (text, record) => (
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <img
+            src={record.image}
+            alt={text}
+            style={{
+              width: 35,
+              height: 35,
+              borderRadius: 8,
+              objectFit: "cover",
+            }}
           />
-        </Space>
+          <span>{text}</span>
+        </div>
       ),
-      sorter: false, // Actions are not sortable
+    },
+    {
+      title: "CATEGORY",
+      dataIndex: "category",
+      key: "category",
+      render: (text) => <span>{text}</span>,
+    },
+    {
+      title: "SELLER",
+      dataIndex: "seller",
+      key: "seller",
+      render: (text) => <span>{text}</span>,
+    },
+    {
+      title: "PRICE",
+      dataIndex: "price",
+      key: "price",
+      render: (text) => (
+        <span >{text}</span>
+      ),
+    },
+    {
+      title: "STATUS",
+      dataIndex: "status",
+      key: "status",
+      render: (status) => statusBadge(status),
+    },
+    {
+      title: "ACTIONS",
+      key: "actions",
+      render: (_, record) => renderActions(record),
     },
   ];
-  
 
-  const dataSource = data?.map((user, index) => ({
-    key: user.id,
-    si: index + 1,
-    firstName: user?.firstName,
-    lastName: user?.lastName,
-    accountID: user?.accountID,
-    gender: user?.gender,
-    email: user?.email,
-    phone: user?.phone,
-    imageUrl: user?.image?.url,
-    date: user?.date, // Fixed here
+  const filteredData =
+    activeTab === "pending"
+      ? data.filter((d) => d.status === "Pending")
+      : data;
+
+  const dataSource = filteredData.map((item) => ({
+    key: item.id,
+    ...item,
   }));
 
   return (
-    <div className="w-full col-span-full md:col-span-6 bg-white rounded-lg">
-      <h2 className="font-semibold py-3">
-New Users
-</h2>
+    <div
+      style={{
+        background: "#fff",
+        borderRadius: 12,
+        padding: 24,
+        boxShadow: "0 1px 8px rgba(0,0,0,0.07)",
+      }}
+    >
+      {/* Header */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <h2 style={{ fontSize: 18, fontWeight: 700, color: "#1a1a2e" }}>
+          Recent Listings
+        </h2>
+        <Space>
+          <Button
+            onClick={() => setActiveTab("all")}
+            style={{
+              background: activeTab === "all" ? "#1a1a2e" : "transparent",
+              color: activeTab === "all" ? "#fff" : "#888",
+              border: "none",
+              borderRadius: 6,
+              fontWeight: 500,
+            }}
+          >
+            All
+          </Button>
+          <Button
+            onClick={() => setActiveTab("pending")}
+            style={{
+              background: activeTab === "pending" ? "#1a1a2e" : "transparent",
+              color: activeTab === "pending" ? "#fff" : "#888",
+              border: "none",
+              borderRadius: 6,
+              fontWeight: 500,
+            }}
+          >
+            Pending
+          </Button>
+          {/* Filter icon */}
+          <button
+            style={{
+              background: "none",
+              border: "1px solid #e0e0e0",
+              borderRadius: 6,
+              padding: "5px 10px",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <line x1="4" y1="6" x2="20" y2="6" />
+              <line x1="8" y1="12" x2="16" y2="12" />
+              <line x1="11" y1="18" x2="13" y2="18" />
+            </svg>
+          </button>
+        </Space>
+      </div>
+
       <ConfigProvider
         theme={{
           components: {
             Table: {
-              headerBg: "#FF8133",
-              headerColor: "#000000",
-              headerBorderRadius: 5,
+              headerBg: "#ffffff",
+              headerColor: "#9b9b9b",
+              headerBorderRadius: 0,
             },
           },
         }}
@@ -171,57 +264,43 @@ New Users
         />
       </ConfigProvider>
 
-      {/* Modal */}
+      {/* Detail Modal */}
       <Modal
         open={isModalVisible}
-        onOk={handleCancel}
         onCancel={handleCancel}
         footer={null}
         centered
-        bodyStyle={{ padding: "15px" }}
       >
-        <div className="text-black bg-primary">
-          <h1 className="text-center text-2xl font-semibold my-2">
-            Recent User Details
-          </h1>
-          <div className="p-5">
-            <div className="flex justify-between py-3 border-b">
-              <p>Transaction ID :</p>
-              <p>{selectedTransaction?.key || "N/A"}</p>
-            </div>
-            <div className="flex justify-between py-3 border-b">
-              <p>First Name :</p>
-              <p>{selectedTransaction?.firstName || "N/A"}</p>
-            </div>
-            <div className="flex justify-between py-3 border-b">
-              <p>Last Name :</p>
-              <p>{selectedTransaction?.lastName || "N/A"}</p>
-            </div>
-            <div className="flex justify-between py-3 border-b">
-              <p>Gender :</p>
-              <p>{selectedTransaction?.gender || "N/A"}</p>
-            </div>
-            <div className="flex justify-between py-3 border-b">
-              <p>Email :</p>
-              <p>{selectedTransaction?.email || "N/A"}</p>
-            </div>
-            <div className="flex justify-between py-3 border-b">
-              <p>Phone:</p>
-              <p>{selectedTransaction?.phone || "N/A"}</p>
-            </div>
-            <div className="flex justify-between py-3">
-              <p>Date :</p>
-              <p>
-                {selectedTransaction?.date
-                  ? moment(selectedTransaction.date).format("DD MMM YYYY")
-                  : "N/A"}
-              </p>
-            </div>
+        {selectedListing && (
+          <div>
+            <h2 style={{ textAlign: "center", fontSize: 20, fontWeight: 700, marginBottom: 16 }}>
+              Listing Details
+            </h2>
+            {[
+              ["Name", selectedListing.name],
+              ["Category", selectedListing.category],
+              ["Seller", selectedListing.seller],
+              ["Price", selectedListing.price],
+              ["Status", selectedListing.status],
+            ].map(([label, value]) => (
+              <div
+                key={label}
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  padding: "12px 0",
+                  borderBottom: "1px solid #f0f0f0",
+                }}
+              >
+                <span style={{ color: "#888" }}>{label} :</span>
+                <span style={{ fontWeight: 500 }}>{value}</span>
+              </div>
+            ))}
           </div>
-        </div>
+        )}
       </Modal>
     </div>
   );
 };
 
-export default RecentTransactions;
+export default RecentListings;

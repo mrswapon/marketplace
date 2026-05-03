@@ -3,17 +3,16 @@ import { useState } from "react";
 import { IoIosLogOut } from "react-icons/io";
 import { IoSettingsSharp } from "react-icons/io5";
 import { NavLink, useNavigate } from "react-router-dom";
-import logo from "/public/logo/logo.png";
+import logo from "/logo/logo.png";
 import { useDispatch } from "react-redux";
 import { logoutUser } from "../../../redux/features/auth/authSlice";
-import { RiMoneyDollarCircleFill } from "react-icons/ri";
-import {  FaUserAlt } from "react-icons/fa";
+import { RiArchiveFill, RiMoneyDollarCircleFill } from "react-icons/ri";
+import { FaUserAlt } from "react-icons/fa";
 import { MdDashboard } from "react-icons/md";
-
-
 
 const sidebarItems = [
   { path: "/", name: "Dashboard", icon: <MdDashboard className="size-6" /> },
+  { path: "/listings", name: "Listings", icon: <RiArchiveFill  className="size-6" /> },
   { path: "/users", name: "Users", icon: <FaUserAlt className="size-6" /> },
   { path: "/Earnings", name: "Earnings", icon: <RiMoneyDollarCircleFill className="size-6" /> },
   { path: "/settings", name: "Settings", icon: <IoSettingsSharp className="size-6" /> },
@@ -32,11 +31,11 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
   return (
     <div>
       {/* Desktop Sidebar */}
-      <div className="hidden md:flex flex-col w-[220px] lg:w-[260px] xl:w-[280px] bg-[#FBF5F2] fixed h-screen shadow-2xl">
+      <div className="hidden md:flex flex-col w-[220px] lg:w-[260px] xl:w-[280px] bg-[#FFFFFF] fixed h-screen shadow-xl">
         <div className="flex flex-col h-full justify-between">
           <div>
-            <div className="flex flex-col  items-center pb-4  text-white my-4 border-b border-[#FF8133]">
-              <img src={logo} alt="logo" className="w-[150px] h-[150px]" />
+            <div className="flex flex-col items-center pb-4  text-[#6B7280] my-4 ">
+              <img src={logo} alt="logo" className="w-[125px] h-[118px]" />
             </div>
             <ul className="flex flex-col gap-3">
               {sidebarItems.map((item) => (
@@ -44,8 +43,8 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
                   key={item.name}
                   to={item.path}
                   className={({ isActive }) =>
-                    `w-[80%] mx-auto px-5 py-4 flex items-center gap-3  rounded-md transition-all duration-300 ease-in-out hover:bg-[#FF8133] ${
-                      isActive ? "bg-[#FF8133]" : ""
+                    `w-[80%] mx-auto px-5 py-4 flex items-center gap-3  rounded-md transition-all duration-300 ease-in-out hover:bg-[#E7F2EE] hover:text-[#0F3D2E] ${
+                      isActive ? "bg-[#E7F2EE] text-[#0F3D2E]" : ""
                     }`
                   }
                 >
@@ -57,9 +56,9 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
           </div>
           <button
             onClick={() => setShowModal(true)}
-            className="flex items-center gap-2 px-10 py-4 text-white mb-4"
+            className="flex items-center gap-2 px-10 py-4 hover:text-[#0F3D2E] text-[#6B7280] mb-4"
           >
-            <IoIosLogOut className="ml-2 size-8 bg-red-500 p-1 text-white rounded-md" />
+            <IoIosLogOut className="ml-2 size-8 bg-red-500 p-1 text-[#FFFFFF] rounded-md" />
             <span>Logout</span>
           </button>
         </div>
@@ -77,18 +76,17 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
         <ul className="flex flex-col gap-3">
           {sidebarItems.map((item) => (
             <NavLink
-              key={item.name}
-              to={item.path}
-              onClick={toggleSidebar}
-              className={({ isActive }) =>
-                `w-[70%] mx-auto px-5 py-2 flex items-center gap-3 text-[#FFFFFF] rounded-md transition-all duration-300 ease-in-out hover:bg-[#85594B] ${
-                  isActive ? "bg-[#85594B]" : ""
-                }`
-              }
-            >
-              {item.icon}
-              <span>{item.name}</span>
-            </NavLink>
+                  key={item.name}
+                  to={item.path}
+                  className={({ isActive }) =>
+                    `w-[80%] mx-auto px-5 py-4 flex items-center gap-3  rounded-md transition-all duration-300 ease-in-out hover:bg-[#E7F2EE] hover:text-[#0F3D2E] ${
+                      isActive ? "bg-[#E7F2EE] text-[#0F3D2E]" : ""
+                    }`
+                  }
+                >
+                  {item.icon}
+                  <span>{item.name}</span>
+                </NavLink>
           ))}
         </ul>
         <button

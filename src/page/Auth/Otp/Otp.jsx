@@ -1,6 +1,5 @@
-import otpImage from "../../../assets/auth/otp.png";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { IoIosArrowBack } from "react-icons/io";
+import logo from "/logo/logo.png";
+import {  useNavigate, useParams } from "react-router-dom";
 import OTPInput from "react-otp-input";
 import { useState } from "react";
 import CustomButton from "../../../utils/CustomButton";
@@ -16,18 +15,15 @@ const Otp = () => {
   const navigate = useNavigate();
   const [forgotPassword] = useForgotPasswordMutation();
   const [verifyOtp, { isLoading }] = useVerifyEmailMutation();
+
   const handleOtpChange = (otpValue) => {
     setOtp(otpValue);
   };
+
   const handleMatchOtp = async () => {
     try {
-      const res = await verifyOtp({
-        email,
-        oneTimeCode: otp,
-      });
-      if (res.error) {
-        toast.error(res?.error?.data?.message);
-      }
+      const res = await verifyOtp({ email, oneTimeCode: otp });
+      if (res.error) toast.error(res?.error?.data?.message);
       if (res.data) {
         toast.success(res?.data?.message);
         navigate(`/auth/new-password/${email}`);
@@ -40,64 +36,67 @@ const Otp = () => {
   const handleResendPassword = async () => {
     try {
       const res = await forgotPassword({ email });
-      if (res.error) {
-        toast.error(res?.error?.data?.message);
-        console.log(res.error);
-      }
-      if (res.data) {
-        toast.success(res.data.message);
-      }
+      if (res.error) toast.error(res?.error?.data?.message);
+      if (res.data) toast.success(res.data.message);
     } catch (error) {
       toast.error("Something went wrong");
     }
   };
+
   return (
-    <div className="w-full  h-full md:h-screen md:flex justify-around ">
-    <div className="w-full max-w-7xl mx-auto rounded-md h-[70%] md:my-28 grid grid-cols-1 md:grid-cols-2 place-content-center px-5 py-15 gap-8 md:mx-10 ">
-      <div>
-        <img src={otpImage} className="w-full h-[461px] mx-auto" alt="" />
-      </div>
-      <div className="mt-16 md:mt-32">
-        <div className="mb-5 space-y-5">
-          <h1 className="font-semibold text-xl flex items-center gap-2">
-            <Link to="/auth/forget-password">
-              <IoIosArrowBack />
-            </Link>
-            Verify
-          </h1>
-          <h1>{`We'll send a verification code to your email. Check your inbox and enter the code here.`}</h1>
-        </div>
+    <div className="w-full min-h-screen flex items-center justify-center bg-[linear-gradient(180deg,_#DEFFF5_-61.52%,_#FFFFFF_100%)] px-4">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-sm p-5 flex flex-col items-center">
+
+        {/* Logo */}
+        <img src={logo} alt="SellX" className="w-[80px] h-[80px] mb-1" />
+       
+
+        {/* Heading */}
+        <h1 className="text-xl font-bold text-gray-900 mb-2">Check your email</h1>
+        <p className="text-sm text-gray-500 text-center mb-8 leading-relaxed">
+          We sent a reset link to {email}<br />
+          enter 5 digit code that mentioned in the email
+        </p>
+
+        {/* OTP Input */}
         <OTPInput
           value={otp}
           onChange={handleOtpChange}
-          numInputs={6}
+          numInputs={5}
           renderInput={(props) => <input {...props} />}
-          containerStyle="otp-container"
+          containerStyle={{ display: "flex", gap: "10px", marginBottom: "32px" }}
           inputStyle={{
-            width: "100%",
-            maxWidth: "6.5rem",
-            height: "3rem",
-            margin: "0 0.5rem",
-            fontSize: "2rem",
-            fontWeight: "bold",
-            borderBottom: "1px solid #4E4E4E",
+            width: "52px",
+            height: "52px",
+            fontSize: "20px",
+            fontWeight: "600",
+            color: "#111",
             textAlign: "center",
+            border: "1.5px solid #e0e0e0",
+            borderRadius: "10px",
+            backgroundColor: "#f7f7f7",
             outline: "none",
           }}
         />
-        <div onClick={handleMatchOtp} className="mt-5">
+
+        {/* Verify Button */}
+        <div onClick={handleMatchOtp} className="w-full mb-4">
           <CustomButton loading={isLoading} border className="w-full">
-            Verify
+            Verify Code
           </CustomButton>
         </div>
-        <div className="flex justify-between items-center my-4">
-          <h1>Didn’t receive code?</h1>
-          <button onClick={handleResendPassword} className="text-[#4c7e95]">
-            Verify Code
+
+        {/* Resend */}
+        <p className="text-sm text-gray-500">
+          You have not received the email?{" "}
+          <button
+            onClick={handleResendPassword}
+            className="text-[#1a5c40] font-semibold hover:underline"
+          >
+            Resend
           </button>
-        </div>
+        </p>
       </div>
-    </div>
     </div>
   );
 };
