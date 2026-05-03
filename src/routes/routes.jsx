@@ -19,6 +19,7 @@ import Notification from "../component/Main/Notification/Notification";
 import EarningsPage from "../page/EarningsPage/EarningsPage";
 import UsersPage from "../page/Users/UsersPage";
 import ListingsPage from "../page/ListingsPage/ListingsPage";
+import CategoriesPage from "../page/CategoriesPage/CategoriesPage";
 
 const router = createBrowserRouter([
   {
@@ -45,7 +46,11 @@ const router = createBrowserRouter([
       {
         path: "listings",
         element: <ListingsPage />
-      },  
+      }, 
+      {
+        path: "categories",
+        element: <CategoriesPage />
+      }, 
       {
         path: "personal-info",
         element: <PersonalInformationPage />,

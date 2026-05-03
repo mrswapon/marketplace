@@ -7,12 +7,13 @@ import logo from "/logo/logo.png";
 import { useDispatch } from "react-redux";
 import { logoutUser } from "../../../redux/features/auth/authSlice";
 import { RiArchiveFill, RiMoneyDollarCircleFill } from "react-icons/ri";
-import { FaUserAlt } from "react-icons/fa";
+import { FaShapes, FaUserAlt } from "react-icons/fa";
 import { MdDashboard } from "react-icons/md";
 
 const sidebarItems = [
   { path: "/", name: "Dashboard", icon: <MdDashboard className="size-6" /> },
   { path: "/listings", name: "Listings", icon: <RiArchiveFill  className="size-6" /> },
+  { path: "/categories", name: "Categories", icon: <FaShapes   className="size-6" /> },
   { path: "/users", name: "Users", icon: <FaUserAlt className="size-6" /> },
   { path: "/Earnings", name: "Earnings", icon: <RiMoneyDollarCircleFill className="size-6" /> },
   { path: "/settings", name: "Settings", icon: <IoSettingsSharp className="size-6" /> },
