@@ -38,7 +38,7 @@ const ListingsStats = () => {
   ];
 
   return (
-    <div className="flex gap-3 xl:gap-10 w-full py-7">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 xl:gap-10 w-full py-7">
       {stats.map((stat, index) => (
         <div
           key={index}

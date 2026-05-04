@@ -20,6 +20,15 @@ import EarningsPage from "../page/EarningsPage/EarningsPage";
 import UsersPage from "../page/Users/UsersPage";
 import ListingsPage from "../page/ListingsPage/ListingsPage";
 import CategoriesPage from "../page/CategoriesPage/CategoriesPage";
+import StoriesPage from "../page/StoriesPage/StoriesPage";
+import ProfessionalStoresPage from "../page/ProfessionalStoresPage/ProfessionalStoresPage";
+import ProStoresDetailsPage from "../page/ProfessionalStoresPage/ProStoresDetailsPage";
+import Overview from "../component/Main/ProfessionalStores/Overview";
+import Listings from "../component/Main/Listings/Listings";
+import Payments from "../component/Main/ProfessionalStores/Payments";
+import Ads from "../component/Main/ProfessionalStores/Ads";
+import ListingsPro from "../component/Main/ProfessionalStores/ListingsPro";
+import ListingsDetails from "../component/Main/ProfessionalStores/ListingsDetails";
 
 const router = createBrowserRouter([
   {
@@ -42,6 +51,45 @@ const router = createBrowserRouter([
       {
         path: "Earnings",
         element: <EarningsPage />,
+      },
+      {
+        path: "stories",
+        element: <StoriesPage />,
+      },
+      {
+        path: "professional-stores",
+        element: <ProfessionalStoresPage />,
+      },
+      {
+        path: "professional-stores/:id",
+        element: <ProStoresDetailsPage />,
+        children: [
+          {
+            index: true,
+            element: <Overview />
+          },
+          {
+            path: "listing",
+            children: [
+              {
+                index: true,
+                element: <ListingsPro />
+              },
+              {
+                path: ":listingId",
+                element: <ListingsDetails />
+              }
+            ]
+          },
+          {
+            path: "ads",
+            element: <Ads />
+          },
+          {
+            path: "payments",
+            element: <Payments />
+          },
+        ]
       },
       {
         path: "listings",

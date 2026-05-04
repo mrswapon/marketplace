@@ -9,13 +9,17 @@ import { logoutUser } from "../../../redux/features/auth/authSlice";
 import { RiArchiveFill, RiMoneyDollarCircleFill } from "react-icons/ri";
 import { FaShapes, FaUserAlt } from "react-icons/fa";
 import { MdDashboard } from "react-icons/md";
+import { GiOpenBook } from "react-icons/gi";
+import { IoGift } from "react-icons/io5";
 
 const sidebarItems = [
   { path: "/", name: "Dashboard", icon: <MdDashboard className="size-6" /> },
   { path: "/listings", name: "Listings", icon: <RiArchiveFill  className="size-6" /> },
   { path: "/categories", name: "Categories", icon: <FaShapes   className="size-6" /> },
   { path: "/users", name: "Users", icon: <FaUserAlt className="size-6" /> },
-  { path: "/Earnings", name: "Earnings", icon: <RiMoneyDollarCircleFill className="size-6" /> },
+  { path: "/stories", name: "Stories", icon: <GiOpenBook className="size-6" /> },
+  { path: "/professional-stores", name: "Pro Stores", icon: <IoGift className="size-6" /> },
+  { path: "/Earnings", name: "Payments", icon: <RiMoneyDollarCircleFill className="size-6" /> },
   { path: "/settings", name: "Settings", icon: <IoSettingsSharp className="size-6" /> },
 ];
 
@@ -35,8 +39,8 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
       <div className="hidden md:flex flex-col w-[220px] lg:w-[260px] xl:w-[280px] bg-[#FFFFFF] fixed h-screen shadow-xl">
         <div className="flex flex-col h-full justify-between">
           <div>
-            <div className="flex flex-col items-center pb-4  text-[#6B7280] my-4 ">
-              <img src={logo} alt="logo" className="w-[125px] h-[118px]" />
+            <div className="flex flex-col items-center pb-4  text-[#6B7280] my-2 ">
+              <img src={logo} alt="logo" className="w-[105px] h-[100px]" />
             </div>
             <ul className="flex flex-col gap-3">
               {sidebarItems.map((item) => (
@@ -44,7 +48,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
                   key={item.name}
                   to={item.path}
                   className={({ isActive }) =>
-                    `w-[80%] mx-auto px-5 py-4 flex items-center gap-3  rounded-md transition-all duration-300 ease-in-out hover:bg-[#E7F2EE] hover:text-[#0F3D2E] ${
+                    `w-[80%] mx-auto px-5 py-3 flex items-center gap-3  rounded-md transition-all duration-300 ease-in-out hover:bg-[#E7F2EE] hover:text-[#0F3D2E] ${
                       isActive ? "bg-[#E7F2EE] text-[#0F3D2E]" : ""
                     }`
                   }
@@ -67,7 +71,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
 
       {/* Mobile Sidebar */}
       <div
-        className={`fixed top-0 left-0 z-40 w-64 h-full bg-[#4C7E95] shadow-lg transform ${
+        className={`fixed top-0 left-0 z-40 w-64 h-full bg-[#FFFFFF] shadow-lg transform ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         } transition-transform duration-300 ease-in-out md:hidden`}
       >
