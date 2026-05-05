@@ -5,10 +5,11 @@ import { useSelector } from "react-redux";
 import { Form } from "antd";
 import { useEffect } from "react";
 import CustomInput from "../../../utils/CustomInput";
-
+import profile from "/logo/profile.jpg";
 const PersonalInformation = () => {
   const { user } = useSelector((state) => state.auth);
   const [form] = Form.useForm();
+
   useEffect(() => {
     if (user) {
       form.setFieldsValue({
@@ -18,63 +19,87 @@ const PersonalInformation = () => {
       });
     }
   }, [user, form]);
+
   return (
-    <div className="w-full">
-      {/* Back Button and Title */}
-      <div className="flex justify-between items-center">
-        <div className="flex  items-center my-6">
-          <Link to="/">
-            <IoChevronBack className="text-2xl" />
-          </Link>
-          <h1 className="text-2xl font-semibold">Personal Information</h1>
-        </div>
+    <div className="w-full  bg-gray-50 py-6">
+
+      {/* Header */}
+      <div className="flex items-center gap-2 mb-6">
+        <Link to="/">
+          <IoChevronBack className="text-2xl" />
+        </Link>
+        <h1 className="text-2xl font-semibold">Personal Information</h1>
       </div>
 
-      {/* Profile Information */}
-      <div className="w-[70%] mx-auto h-full grid grid-cols-1">
-        {/* Profile Picture */}
-        <div className="w-full h-full mt-10  flex justify-start items-center">
+      {/* Main Card */}
+      <div className="bg-white rounded-xl shadow-sm p-6 flex gap-10">
+
+        {/* LEFT SIDE */}
+        <div className="w-[260px] flex flex-col items-center text-center">
           <img
-            className="size-32 rounded-full "
-            src={`${imageBaseUrl}${user?.image?.url}`}
-            alt=""
+            src={user?.image?.url ? `${imageBaseUrl}${user.image.url}` : profile}
+            alt="profile"
+            className="w-40 h-40 rounded-2xl object-cover"
           />
-          <div className="ml-5">
-           <h1 className="mt-2 text-gray-500">James Don</h1>
-           <h1 className="text-lg font-semibold uppercase">{user?.role}</h1>
-          </div>
+
+          <h2 className="mt-3 font-semibold text-lg">
+            {user?.fullName || "User Name"}
+          </h2>
+
+          <p className="text-gray-500 text-sm uppercase">
+            {user?.role}
+          </p>
         </div>
 
-        {/* Personal Details */}
-        <Form
-          form={form}
-          layout="vertical"
-          className="w-full mt-10"
-        >
-          {/* Full Name */}
-          <Form.Item label="Full Name" name="fullName">
-            <CustomInput placeholder="Enter your full name" readOnly />
-          </Form.Item>
+        {/* RIGHT SIDE */}
+        <div className="flex-1">
 
-          {/* Email */}
-          <Form.Item label="Email" name="email">
-            <CustomInput placeholder="Enter your email" readOnly />
-          </Form.Item>
+          <Form
+            form={form}
+            layout="vertical"
+            className="space-y-4"
+          >
+            {/* Full Name */}
+            <Form.Item label="Full Name" name="fullName">
+              <CustomInput
+                disabled
+                className="bg-[#f1f3f2]"
+              />
+            </Form.Item>
 
-          {/* Phone Number */}
-          <Form.Item label="Phone Number" name="phone">
-            <CustomInput
-              type="number"
-              placeholder="Enter your phone number"
-              readOnly
-            />
-          </Form.Item>
-          <Link to="/edit-personal-info">
-          <button className="w-full px-8 py-3 bg-[#FF8133] font-semibold rounded-lg">
-            Edit Profile
-          </button>
-        </Link>
-        </Form>
+            {/* Email */}
+            <Form.Item label="Email Address" name="email">
+              <CustomInput
+                disabled
+                className="bg-[#f1f3f2]"
+              />
+            </Form.Item>
+
+            {/* Phone */}
+            <Form.Item label="Phone Number" name="phone">
+              <CustomInput
+                disabled
+                className="bg-[#f1f3f2]"
+              />
+            </Form.Item>
+
+            {/* Buttons */}
+            <div className="flex justify-end gap-4 pt-4">
+
+              <button className="px-6 py-2 rounded-lg bg-[#E8F3EF] text-[#0f3d2e] font-medium">
+                Change Password
+              </button>
+
+              <Link to="/edit-personal-info">
+                <button className="px-6 py-2 rounded-lg bg-[#0f3d2e] text-white font-medium">
+                  Edit Profile
+                </button>
+              </Link>
+
+            </div>
+          </Form>
+
+        </div>
       </div>
     </div>
   );

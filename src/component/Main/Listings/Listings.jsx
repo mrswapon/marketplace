@@ -4,6 +4,7 @@ import { Table, ConfigProvider, Tag } from "antd";
 import { IoEyeSharp } from "react-icons/io5";
 import { MdOutlineInfo } from "react-icons/md";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 /* -------------------------------
    RANDOM IMAGE FUNCTION
@@ -73,6 +74,7 @@ const dataSource = [
 ];
 
 const Listings = () => {
+  const navigate = useNavigate();
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [filter, setFilter] = useState("All");
 
@@ -168,7 +170,10 @@ const Listings = () => {
             {/* Approved */}
             {status === "Approved" && (
               <IoEyeSharp
-                onClick={() => setSelectedRecord(record)}
+                onClick={() => {
+  setSelectedRecord(record);
+  navigate(`/listings/${record.id}`);
+}}
                 className="text-[#FF8133] cursor-pointer hover:scale-110 transition"
               />
             )}
@@ -193,7 +198,11 @@ const Listings = () => {
             {status === "RecentlySold" && (
               <>
                 <IoEyeSharp
-                  onClick={() => setSelectedRecord(record)}
+                  
+                onClick={() => {
+  setSelectedRecord(record);
+  navigate(`/listings/${record.id}`);
+}}
                   className="text-[#0F3D2E] cursor-pointer hover:scale-110 transition"
                 />
                 <MdOutlineInfo

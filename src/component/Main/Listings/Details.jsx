@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Mail, Phone, Calendar, ShieldCheck } from "lucide-react";
-const ListingsDetails = () => {
+const Details = () => {
     const IMAGES = [
   "https://images.unsplash.com/photo-1614164185128-e4ec99c436d7?w=700&q=85",
   "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=700&q=85",
@@ -11,7 +11,7 @@ const ListingsDetails = () => {
 ];
   const [active, setActive] = useState(0);
   return (
-    <section className="p-4">
+    <section className="py-4 mt-2 md:mt-5">
     <div className="w-full md:flex justify-between">
   
   {/* LEFT: Image area */}
@@ -180,4 +180,4 @@ const ListingsDetails = () => {
   );
 };
 
-export default ListingsDetails;
+export default Details;

@@ -39,8 +39,11 @@
   background-color: #555555; /* Darker thumb on hover */
 }
 
-/* 
-.ql-toolbar {
-  @apply bg-[#4C7E95] p-3 rounded-md shadow-md text-white;}  */
 
-
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

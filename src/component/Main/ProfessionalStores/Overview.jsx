@@ -3,12 +3,10 @@ import { Mail, Phone, MapPin } from "lucide-react";
 const Overview = () => {
   return (
     <div className="w-full  space-y-4">
-
       {/* Row 1: Store Information + Trust Metrics */}
-      <div className="grid grid-cols-2 gap-4">
-
+      <div className="md:grid grid-cols-2 gap-4">
         {/* Store Information */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-2 md:mb-0">
           <h3 className="text-gray-900 font-semibold text-base mb-3">Store Information</h3>
           <p className="text-gray-400 text-xs mb-1">Description</p>
           <p className="text-gray-600 text-sm leading-relaxed mb-6">

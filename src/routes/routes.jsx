@@ -29,6 +29,7 @@ import Payments from "../component/Main/ProfessionalStores/Payments";
 import Ads from "../component/Main/ProfessionalStores/Ads";
 import ListingsPro from "../component/Main/ProfessionalStores/ListingsPro";
 import ListingsDetails from "../component/Main/ProfessionalStores/ListingsDetails";
+import Details from "../component/Main/Listings/Details";
 
 const router = createBrowserRouter([
   {
@@ -94,6 +95,10 @@ const router = createBrowserRouter([
       {
         path: "listings",
         element: <ListingsPage />
+      }, 
+       {
+        path: "listings/:id",
+        element: <Details />
       }, 
       {
         path: "categories",
