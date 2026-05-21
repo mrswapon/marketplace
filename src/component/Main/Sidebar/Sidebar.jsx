@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { IoIosLogOut } from "react-icons/io";
 import { IoSettingsSharp } from "react-icons/io5";
+import { FaCrown } from "react-icons/fa";
 import { NavLink, useNavigate } from "react-router-dom";
 import logo from "/logo/logo.png";
 import { useDispatch } from "react-redux";
@@ -19,6 +20,7 @@ const sidebarItems = [
   { path: "/users", name: "Users", icon: <FaUserAlt className="size-6" /> },
   { path: "/stories", name: "Stories", icon: <GiOpenBook className="size-6" /> },
   { path: "/professional-stores", name: "Pro Stores", icon: <IoGift className="size-6" /> },
+  { path: "/subscriptions", name: "Subscriptions", icon: <FaCrown  className="size-6" /> },
   { path: "/Earnings", name: "Payments", icon: <RiMoneyDollarCircleFill className="size-6" /> },
   { path: "/settings", name: "Settings", icon: <IoSettingsSharp className="size-6" /> },
 ];

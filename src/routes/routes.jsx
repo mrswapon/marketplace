@@ -30,14 +30,15 @@ import Ads from "../component/Main/ProfessionalStores/Ads";
 import ListingsPro from "../component/Main/ProfessionalStores/ListingsPro";
 import ListingsDetails from "../component/Main/ProfessionalStores/ListingsDetails";
 import Details from "../component/Main/Listings/Details";
-
+import SubscriptionsPage from "../page/SubscriptionsPage/SubscriptionsPage";
+import AdminRoutes from './AdminRoutes'
 const router = createBrowserRouter([
   {
     path: "/",
     element: (
-      // <AdminRoutes>
-      // </AdminRoutes>
+      <AdminRoutes>
       <MainLayout />
+      </AdminRoutes>
     ),
     errorElement: <h1>Error</h1>,
     children: [
@@ -104,6 +105,10 @@ const router = createBrowserRouter([
         path: "categories",
         element: <CategoriesPage />
       }, 
+      {
+        path: "subscriptions", 
+        element: <SubscriptionsPage />
+      },
       {
         path: "personal-info",
         element: <PersonalInformationPage />,
