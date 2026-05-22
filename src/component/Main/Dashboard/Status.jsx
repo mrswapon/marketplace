@@ -2,29 +2,19 @@ import PropTypes from "prop-types";
 import { BsShop } from "react-icons/bs";
 import { FaBolt, FaUsers, FaStore, FaClock } from "react-icons/fa";
 import { MdOutlineMonetizationOn } from "react-icons/md";
-import { useGetDashboardStatusQuery } from "../../../redux/features/dashboard/dashboardApi";
+import { useGetIncomeRatioQuery } from "../../../redux/features/dashboard/dashboardApi";
 
 const StatCard = ({ icon: Icon, iconBg, iconColor, label, value, change, changeType }) => {
-  const isPositive = changeType === "positive";
   const isNegative = changeType === "negative";
-
-
   return (
     <div className="flex flex-col justify-between mt-10 p-5 bg-white rounded-2xl shadow-sm border border-gray-100 min-w-0">
       <div className="flex items-center justify-between mb-3">
-        {/* Icon */}
         <div
           className="flex items-center justify-center rounded-xl"
-          style={{
-            backgroundColor: iconBg,
-            width: 44,
-            height: 44,
-          }}
+          style={{ backgroundColor: iconBg, width: 44, height: 44 }}
         >
           <Icon style={{ color: iconColor, fontSize: 20 }} />
         </div>
-
-        {/* Badge */}
         <span
           className="text-xs font-semibold px-2 py-0.5 rounded"
           style={{
@@ -32,16 +22,16 @@ const StatCard = ({ icon: Icon, iconBg, iconColor, label, value, change, changeT
             backgroundColor: isNegative ? "#fef2f2" : "#f0fdf4",
           }}
         >
-          {isPositive ? `+${change}` : isNegative ? `-${change}` : `+${change}`}
+          {changeType === "absolute"
+            ? `+${change}`
+            : isNegative
+            ? `-${change}%`
+            : `+${change}%`}
         </span>
       </div>
-
-      {/* Label */}
       <p className="text-xs font-medium tracking-widest text-gray-400 uppercase mb-1">
         {label}
       </p>
-
-      {/* Value */}
       <p className="text-2xl font-bold text-gray-900">{value}</p>
     </div>
   );
@@ -53,12 +43,21 @@ StatCard.propTypes = {
   iconColor: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-  change: PropTypes.string.isRequired,
-  changeType: PropTypes.oneOf(["positive", "negative", "neutral"]).isRequired,
+  change: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  changeType: PropTypes.oneOf(["positive", "negative", "neutral", "absolute"]).isRequired,
 };
 
 const Status = () => {
-  const { data } = useGetDashboardStatusQuery();
+  // ✅ Pass a valid timespan string, not the moment `months` import
+  const { data } = useGetIncomeRatioQuery("yearly");
+
+  // ✅ Destructure from the correct nested path
+  const kpi = data?.data?.kpi_metrics;
+
+  const formatUsers = (val) => {
+    if (!val && val !== 0) return "—";
+    return val >= 1000 ? (val / 1000).toFixed(1) + "k" : val.toString();
+  };
 
   const stats = [
     {
@@ -66,8 +65,8 @@ const Status = () => {
       iconBg: "#EEF2FF",
       iconColor: "#6366f1",
       label: "Total Listings",
-      value: data?.totalListings?.toLocaleString() || "24,592",
-      change: "12.5%",
+      value: kpi?.total_listings?.value?.toLocaleString() ?? "—",
+      change: kpi?.total_listings?.change ?? 0,
       changeType: "positive",
     },
     {
@@ -75,8 +74,8 @@ const Status = () => {
       iconBg: "#EFF6FF",
       iconColor: "#3b82f6",
       label: "Active Listings",
-      value: data?.activeListings?.toLocaleString() || "18,203",
-      change: "4.2%",
+      value: kpi?.active_listings?.value?.toLocaleString() ?? "—",
+      change: kpi?.active_listings?.change ?? 0,
       changeType: "positive",
     },
     {
@@ -84,12 +83,8 @@ const Status = () => {
       iconBg: "#F0FDF4",
       iconColor: "#22c55e",
       label: "Total Users",
-      value: data?.totalUser
-        ? data.totalUser >= 1000
-          ? (data.totalUser / 1000).toFixed(1) + "k"
-          : data.totalUser
-        : "156.4k",
-      change: "8.1%",
+      value: formatUsers(kpi?.total_users?.value),
+      change: kpi?.total_users?.change ?? 0,
       changeType: "positive",
     },
     {
@@ -97,29 +92,28 @@ const Status = () => {
       iconBg: "#FFF7ED",
       iconColor: "#f97316",
       label: "Prof. Stores",
-      value: data?.totalSeller?.toLocaleString() || "1,248",
-      change: "2.4%",
-      changeType: "negative",
+      value: kpi?.total_stores?.value?.toLocaleString() ?? "—",
+      change: kpi?.total_stores?.change ?? 0,
+      changeType: "positive",
     },
     {
       icon: MdOutlineMonetizationOn,
       iconBg: "#F0FDF4",
       iconColor: "#16a34a",
       label: "Revenue",
-      value: data?.revenue
-        ? "$" + Number(data.revenue).toLocaleString()
-        : "$42,910",
-      change: "18.7%",
-      changeType: "positive",
+      value: kpi ? "$" + Number(kpi.revenue?.value ?? 0).toLocaleString() : "—",
+      change: kpi?.revenue?.change ?? 0,
+      changeType: kpi?.revenue?.change < 0 ? "negative" : "positive",
     },
     {
       icon: FaClock,
       iconBg: "#FFF1F2",
       iconColor: "#f43f5e",
       label: "Pending Appr.",
-      value: data?.pendingApproval?.toLocaleString() || "214",
-      change: "14",
-      changeType: "neutral",
+      value: kpi?.pending_approvals?.value?.toLocaleString() ?? "—",
+      change: kpi?.pending_approvals?.change ?? 0,
+      // ✅ Use change_type from API when available
+      changeType: kpi?.pending_approvals?.change_type ?? "neutral",
     },
   ];
 

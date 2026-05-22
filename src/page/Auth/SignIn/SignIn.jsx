@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate,  } from "react-router-dom";
 import { Form, Checkbox } from "antd";
 import { HiOutlineLockClosed, HiOutlineMail } from "react-icons/hi";
 import CustomButton from "../../../utils/CustomButton";
@@ -21,11 +21,11 @@ const SignIn = () => {
       if (res.error) {
         toast.error(res.error.data.message);
       }
-      if (res.data) {
+      if (res?.data?.success === true) {
         dispatch(
           loggedUser({
-            token: res.data.data.attributes?.tokens?.access?.token,
-            user: res.data.data.attributes?.user,
+            token: res?.data?.data?.tokens?.accessToken,
+            user: res?.data?.data?.user,
           })
         );
         toast.success(res.data.message);

@@ -7,14 +7,14 @@ const dashboardApi = baseApi.injectEndpoints({
         url: "/admin/getTotalStatus",
         method: "GET",
       }),
-      transformResponse: (response) => response?.data?.attributes,
+      transformResponse: (response) => response,
     }),
     getIncomeRatio: builder.query({
-      query: (year) => ({
-        url: `/admin/getIncomeRatio?year=${year}`,
+      query: (date) => ({
+        url: `/admin/dashboard/summary?timespan=${date}`,
         method: "GET",
       }),
-      transformResponse: (response) => response?.data?.attributes,
+      transformResponse: (response) => response,
     }),
   }),
 });
