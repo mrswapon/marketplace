@@ -25,10 +25,10 @@ const Settings = () => {
     //   title: "Personal Information",
     //   path: "personal-info",
     // },
-    {
-      title: "Change password",
-      path: "change-password",
-    },
+    // {
+    //   title: "Change password",
+    //   path: "change-password",
+    // },
     {
       title: "Privacy Policy",
       path: "privacy-policy",
@@ -90,7 +90,7 @@ const Settings = () => {
           </h2>
         </div>
       ))}
-      <Modal
+      {/* <Modal
         title={
           <div
             onClick={() => setIsModalOpen(false)}
@@ -145,7 +145,7 @@ const Settings = () => {
                 <CustomInput placeholder="Set Your New Password" isPassword />
               </Form.Item>
 
-              {/* Field */}
+              // Field 
               <Form.Item
                 name="reenterPassword"
                 dependencies={["newPassword"]}
@@ -264,7 +264,7 @@ const Settings = () => {
                 <CustomInput placeholder="New Password" isPassword />
               </Form.Item>
 
-              {/* Field */}
+              // Field 
               <Form.Item
                 name="confirm_password"
                 dependencies={["new_password"]}
@@ -294,7 +294,7 @@ const Settings = () => {
             </Form>
           </div>
         )}
-      </Modal>
+      </Modal> */}
     </section>
   );
 };

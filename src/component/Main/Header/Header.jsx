@@ -41,7 +41,7 @@ const Header = ({ toggleSidebar, title = "Dashboard" }) => {
         {/* Name & Role */}
         <div className="hidden md:flex flex-col leading-tight">
           <span className="text-sm font-semibold text-gray-900">
-            {user?.firstName + user?.lastName}
+            {user?.firstName + " " + user?.lastName}
           </span>
           <span className="text-xs text-gray-400 tracking-wide uppercase">
             {user?.role }

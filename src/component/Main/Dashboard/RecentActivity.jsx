@@ -3,8 +3,15 @@ import { AiOutlineUserAdd } from "react-icons/ai";
 import { BsCheckCircle } from "react-icons/bs";
 import { IoInformationCircleOutline } from "react-icons/io5";
 import { MdOutlineCreditCard } from "react-icons/md";
+import { useGetRecentActvitiesQuery } from "../../../redux/features/dashboard/dashboardApi";
 
 const RecentActivity = () => {
+  const { data } = useGetRecentActvitiesQuery({
+  page: 1,
+  limit: 10,
+});
+
+console.log(data)
   // ✅ Pure JSON Data (No JSX)
   const activities = [
     {
@@ -74,7 +81,7 @@ const RecentActivity = () => {
   };
 
   return (
-    <div className="bg-white rounded-2xl p-4 shadow-sm w-full max-w-sm">
+    <div className="bg-white rounded-2xl p-4 shadow-sm w-full">
       {/* Header */}
       <div className="flex justify-between items-center mb-4">
         <div className="text-base font-bold text-gray-900">

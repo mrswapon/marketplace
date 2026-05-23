@@ -4,36 +4,43 @@ import { IoChevronBack } from "react-icons/io5";
 import { RiEdit2Line } from "react-icons/ri";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { useUpdateUserMutation } from "../../../redux/features/profile/profileApi";
+import { useGetUserQuery, useUpdateUserMutation } from "../../../redux/features/profile/profileApi";
 import CustomButton from "../../../utils/CustomButton";
 import CustomInput from "../../../utils/CustomInput";
 import { imageBaseUrl } from "../../../config/imageBaseUrl";
-import { useDispatch, useSelector } from "react-redux";
-import { updateUser } from "../../../redux/features/auth/authSlice";
 import profile from "/logo/profile.jpg";
 
 const EditInformation = () => {
-  const { user } = useSelector((state) => state.auth);
+  const { data } = useGetUserQuery();
+  const user = data?.data;
+
   const [form] = Form.useForm();
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [updateProfileInfo, { isLoading }] = useUpdateUserMutation();
 
   const [imageFile, setImageFile] = useState(null);
-  const [imageUrl, setImageUrl] = useState(
-    user?.image?.url ? `${imageBaseUrl}${user.image.url}` : profile
-  );
+  const [imageUrl, setImageUrl] = useState(profile);
   const fileInputRef = useRef(null);
 
+  // Sync form fields when user data loads
   useEffect(() => {
     if (user) {
       form.setFieldsValue({
-        fullName: user.fullName,
+        firstName: user.firstName,
+        lastName: user.lastName,
         email: user.email,
         phone: user.phone,
+        bio: user.bio,
       });
     }
   }, [user, form]);
+
+  // Sync avatar image when user data loads
+  useEffect(() => {
+    if (user?.avatarUrl) {
+      setImageUrl(`${imageBaseUrl}${user.avatarUrl}`);
+    }
+  }, [user]);
 
   const handleImageChange = (event) => {
     const file = event.target.files?.[0];
@@ -45,19 +52,20 @@ const EditInformation = () => {
 
   const onFinish = async (values) => {
     const formdata = new FormData();
-    formdata.append("fullName", values.fullName);
-    formdata.append("email", values.email);
+    formdata.append("firstName", values.firstName);
+    formdata.append("lastName", values.lastName);
     formdata.append("phone", values.phone);
-    if (imageFile) formdata.append("image", imageFile);
+    formdata.append("bio", values.bio);
+    if (imageFile) formdata.append("avatarURL", imageFile);
 
     try {
       const response = await updateProfileInfo(formdata);
+      console.log(response)
       if (response.error) {
         toast.error(response.error.data.message);
         return;
       }
-      if (response.data) {
-        dispatch(updateUser({ user: response?.data?.attributes }));
+      if (response?.data?.user) {
         toast.success("Profile updated successfully!");
         navigate("/personal-info");
       }
@@ -66,8 +74,10 @@ const EditInformation = () => {
     }
   };
 
+  const fullName = user ? `${user.firstName} ${user.lastName}` : "User Name";
+
   return (
-    <div className="w-full  bg-gray-50 py-5 ">
+    <div className="w-full bg-gray-50 py-5">
 
       {/* Header */}
       <div className="flex items-center gap-2 mb-6">
@@ -88,6 +98,7 @@ const EditInformation = () => {
           >
             <img
               src={imageUrl}
+              crossOrigin="anonymous"
               alt="profile"
               className="w-40 h-40 rounded-2xl object-cover"
             />
@@ -109,38 +120,39 @@ const EditInformation = () => {
             className="hidden"
           />
 
-          <h2 className="mt-5 font-semibold text-lg">
-            {user?.fullName || "User Name"}
-          </h2>
-          <p className="text-gray-500 text-sm uppercase">
-            {user?.role}
-          </p>
+          <h2 className="mt-5 font-semibold text-lg">{fullName}</h2>
+          <p className="text-gray-500 text-sm uppercase">{user?.role}</p>
         </div>
 
         {/* RIGHT SIDE */}
         <div className="flex-1">
-          <Form
-            form={form}
-            layout="vertical"
-            onFinish={onFinish}
-            className="space-y-4"
-          >
-            {/* Full Name */}
-            <Form.Item label="Full Name" name="fullName">
-              <CustomInput placeholder="Enter your full name" />
+          <Form form={form} layout="vertical" onFinish={onFinish} className="">
+
+            <div className="flex space-x-2">
+              <Form.Item className="w-[50%]" label="First Name" name="firstName">
+              <CustomInput placeholder="Enter your first name" />
             </Form.Item>
 
-            {/* Email */}
-            <Form.Item label="Email Address" name="email">
+            <Form.Item className="w-[50%]" label="Last Name" name="lastName">
+              <CustomInput placeholder="Enter your last name" />
+            </Form.Item>
+            </div>
+   
+   <div className="flex space-x-2">
+    <Form.Item className="w-[50%]" label="Email Address" name="email">
               <CustomInput placeholder="Enter your email" readOnly />
             </Form.Item>
 
-            {/* Phone */}
-            <Form.Item label="Phone Number" name="phone">
+            <Form.Item className="w-[50%]" label="Phone Number" name="phone">
               <CustomInput type="tel" placeholder="Enter your phone number" />
             </Form.Item>
 
-            {/* Buttons */}
+   </div>
+            
+            <Form.Item label="Bio" name="bio">
+              <CustomInput placeholder="Enter your bio" />
+            </Form.Item>
+
             <div className="flex justify-end gap-4 pt-4">
               <CustomButton
                 loading={isLoading}
@@ -149,6 +161,7 @@ const EditInformation = () => {
                 Save & Change
               </CustomButton>
             </div>
+
           </Form>
         </div>
 

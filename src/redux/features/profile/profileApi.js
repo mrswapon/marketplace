@@ -12,7 +12,7 @@ const profileApi = baseApi.injectEndpoints({
 
     updateUser: builder.mutation({
       query: (data) => ({
-        url: "/user/update",
+        url: "/users/me",
         method: "PATCH",
         body: data,
       }),
@@ -22,11 +22,28 @@ const profileApi = baseApi.injectEndpoints({
     changePassword: builder.mutation({
       query: (data) => ({
         url: "/auth/change-password",
-        method: "PATCH",
+        method: "POST",
         body: data,
       }),
-      transformResponse: (response) => response.data,
+      transformResponse: (response) => response,
     }),
+
+    getNotifications: builder.query({
+    query: ({ page, limit, isRead }) => ({
+      url: `/notifications?page=${page}&limit=${limit}&isRead=${isRead}`,
+      method: "GET",
+    }),
+    providesTags: ["Notifications"],
+    transformResponse: (response) => response,
+   }),
+   readNotifications: builder.mutation({
+      query: (id) => ({
+        url: `/notifications/${id}/read`,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["User"],
+      transformResponse: (response) => response,
+   })
   }),
 });
 
@@ -34,4 +51,6 @@ export const {
   useGetUserQuery,
   useUpdateUserMutation,
   useChangePasswordMutation,
+  useGetNotificationsQuery,
+  useReadNotificationsMutation
 } = profileApi;

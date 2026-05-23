@@ -16,7 +16,15 @@ const dashboardApi = baseApi.injectEndpoints({
       }),
       transformResponse: (response) => response,
     }),
+    
+    getRecentActvities: builder.query({
+    query: ({ page, limit}) => ({
+      url: `/admin/activities?page=${page}&limit=${limit}`,
+      method: "GET",
+    }),
+    transformResponse: (response) => response,
+   }),
   }),
 });
 
-export const { useGetDashboardStatusQuery, useGetIncomeRatioQuery } = dashboardApi;
+export const { useGetDashboardStatusQuery, useGetIncomeRatioQuery, useGetRecentActvitiesQuery } = dashboardApi;

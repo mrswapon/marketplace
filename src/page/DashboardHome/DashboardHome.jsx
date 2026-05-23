@@ -9,27 +9,27 @@ const DashboardHome = () => {
       <div className="px-3">
         <Status />
     
-        <div className="w-full h-full md:h-[50vh]  flex flex-col gap-4 md:flex-row justify-between items-center">
+        <div className="w-full h-full py-5  flex flex-col gap-4 md:flex-row justify-between items-center">
             {/* Left Column: Chart */}
-            <div className="w-full lg:w-[74%]  rounded-lg p-1">
+            <div className="w-full lg:w-[60%] xl:w-[74%]  rounded-lg p-1">
               <IncomeGraphChart />
             </div>
             
             {/* Right Column: Pie Chart */}
-            <div className="w-full lg:w-[24%] ">
+            <div className="w-full lg:w-[38%] xl:w-[24%] ">
               <Piechart />
             </div>
           </div>
 
 
-          <div className="w-full h-full   flex flex-col gap-4 md:flex-row justify-between items-center">
+          <div className="w-full h-full xl:flex justify-between items-center">
             {/* Right Column: Pie Chart */}
-            <div className="w-full lg:w-[24%] ">
+            <div className="w-full xxl:w-[24%] ">
               <RecentActivity />
             </div>
           
             {/* Left Column: Chart */}
-            <div className="w-full lg:w-[74%]  rounded-lg ">
+            <div className="w-full xl:w-[74%]  rounded-lg ">
               <RecentTransactions />
             </div>
             
