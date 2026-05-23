@@ -1,304 +1,203 @@
 import { useState } from "react";
-import { ConfigProvider, Modal, Space, Table, Button } from "antd";
+import { Table, Modal, Input, Select } from "antd";
 import { AiOutlineEye } from "react-icons/ai";
 import { FiCheck, FiX } from "react-icons/fi";
-import { IoInformationCircleOutline } from "react-icons/io5";
+
+import { useListRecentListingsQuery } from "../../../redux/features/dashboard/dashboardApi";
+import { imageBaseUrl } from "../../../config/imageBaseUrl";
+import profile from "/logo/profile.jpg";
+
+const { Option } = Select;
 
 const RecentListings = () => {
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedListing, setSelectedListing] = useState(null);
-  const [activeTab, setActiveTab] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [limit] = useState(8);
+  const [status, setStatus] = useState("all");
+  const [search, setSearch] = useState("");
+  const [selected, setSelected] = useState(null);
 
-  const showModal = (record) => {
-    setSelectedListing(record);
-    setIsModalVisible(true);
-  };
+  // API
+  const { data, isFetching } = useListRecentListingsQuery({
+    page: currentPage,
+    limit,
+    status,
+    search,
+  });
 
-  const handleCancel = () => {
-    setIsModalVisible(false);
-    setSelectedListing(null);
-  };
+  const dataSource = data?.data?.items || [];
+  const meta = data?.data?.pagination;
 
-  const data = [
-    {
-      id: 1,
-      name: "2023 Mercedes EQE",
-      image: "https://images.unsplash.com/photo-1617654112368-307921291f42?w=80&q=80",
-      category: "Cars",
-      seller: "Euro Motors",
-      price: "$72,000",
-      status: "Approved",
-    },
-    {
-      id: 2,
-      name: "Downtown Loft",
-      image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=80&q=80",
-      category: "Properties",
-      seller: "Skyline Realty",
-      price: "$450k",
-      status: "Pending",
-    },
-    {
-      id: 3,
-      name: "MacBook Pro M3",
-      image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=80&q=80",
-      category: "Electronics",
-      seller: "Tech Hub",
-      price: "$2,499",
-      status: "Approved",
-    },
-    {
-      id: 4,
-      name: "Rolex Datejust",
-      image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=80&q=80",
-      category: "Electronics",
-      seller: "Watch World",
-      price: "$12,400",
-      status: "Rejected",
-    },
-  ];
+  const img = (path) => (path ? `${imageBaseUrl}${path}` : profile);
 
   const statusBadge = (status) => {
-    const styles = {
-      Approved: { background: "#e6f9f0", color: "#22c55e" },
-      Pending:  { background: "#fff7e6", color: "#f59e0b" },
-      Rejected: { background: "#fee2e2", color: "#ef4444" },
+    const map = {
+      active: "text-green-600",
+      pending: "text-yellow-600",
+      draft: "text-yellow-600",
+      rejected: "text-red-600",
+      sold: "text-blue-600",
     };
+
     return (
-      <span
-        style={{
-          ...styles[status],
-          padding: "3px 14px",
-          borderRadius: 20,
-          fontWeight: 600,
-          fontSize: 12,
-        }}
-      >
+      <span className={`font-semibold ${map[status?.toLowerCase()] || "text-gray-500"}`}>
         {status}
       </span>
     );
   };
 
-  const renderActions = (record) => {
-    if (record.status === "Pending") {
-      return (
-        <Space size="middle">
-          <FiCheck
-            style={{ fontSize: 18, cursor: "pointer", color: "#aaa" }}
-            className="hover:text-green-500 transition-colors"
-            title="Approve"
-          />
-          <FiX
-            style={{ fontSize: 18, cursor: "pointer", color: "#aaa" }}
-            className="hover:text-red-500 transition-colors"
-            title="Reject"
-          />
-        </Space>
-      );
-    }
-    if (record.status === "Rejected") {
-      return (
-        <IoInformationCircleOutline
-          onClick={() => showModal(record)}
-          style={{ fontSize: 20, cursor: "pointer", color: "#aaa" }}
-          title="Info"
-        />
-      );
-    }
-    // Approved
-    return (
-      <AiOutlineEye
-        onClick={() => showModal(record)}
-        style={{ fontSize: 20, cursor: "pointer", color: "#aaa" }}
-        title="View"
-      />
-    );
+  const handleView = (record) => {
+    setSelected(record);
   };
 
   const columns = [
     {
-      title: "NAME",
-      dataIndex: "name",
-      key: "name",
-      render: (text, record) => (
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+      title: "Name",
+      dataIndex: "title",
+      render: (_, record) => (
+        <div className="flex items-center gap-2">
           <img
-            src={record.image}
-            alt={text}
-            style={{
-              width: 35,
-              height: 35,
-              borderRadius: 8,
-              objectFit: "cover",
-            }}
+          crossOrigin="anonymous"
+            src={img(record.thumbnail)}
+            className="w-9 h-9 rounded-md object-cover"
           />
-          <span>{text}</span>
+          <span className="font-medium">{record.title}</span>
         </div>
       ),
     },
     {
-      title: "CATEGORY",
-      dataIndex: "category",
-      key: "category",
-      render: (text) => <span>{text}</span>,
+      title: "Category",
+      dataIndex: "category_name",
     },
     {
-      title: "SELLER",
-      dataIndex: "seller",
-      key: "seller",
-      render: (text) => <span>{text}</span>,
-    },
-    {
-      title: "PRICE",
-      dataIndex: "price",
-      key: "price",
-      render: (text) => (
-        <span >{text}</span>
+      title: "Seller",
+      dataIndex: "seller_name",
+      render: (_, record) => (
+        <div className="flex items-center gap-2">
+          <img
+          crossOrigin="anonymous"
+            src={img(record.seller_avatar)}
+            className="w-6 h-6 rounded-full object-cover"
+          />
+          {record.seller_name}
+        </div>
       ),
     },
     {
-      title: "STATUS",
+      title: "Price",
+      dataIndex: "price",
+      render: (price) => (
+        <span className="font-semibold">${price}</span>
+      ),
+    },
+    {
+      title: "Status",
       dataIndex: "status",
-      key: "status",
       render: (status) => statusBadge(status),
     },
     {
-      title: "ACTIONS",
-      key: "actions",
-      render: (_, record) => renderActions(record),
+      title: "Action",
+      render: (_, record) => (
+        <div className="flex gap-3 no-row-click text-lg">
+          <FiCheck
+            className="text-gray-400 hover:text-green-500 cursor-pointer"
+            onClick={() => console.log("Approve", record)}
+          />
+
+          <FiX
+            className="text-gray-400 hover:text-red-500 cursor-pointer"
+            onClick={() => console.log("Reject", record)}
+          />
+
+          <AiOutlineEye
+            className="text-gray-400 hover:text-blue-500 cursor-pointer"
+            onClick={() => handleView(record)}
+          />
+        </div>
+      ),
     },
   ];
 
-  const filteredData =
-    activeTab === "pending"
-      ? data.filter((d) => d.status === "Pending")
-      : data;
-
-  const dataSource = filteredData.map((item) => ({
-    key: item.id,
-    ...item,
-  }));
-
   return (
-    <div
-      style={{
-        background: "#fff",
-        borderRadius: 12,
-        padding: 24,
-        boxShadow: "0 1px 8px rgba(0,0,0,0.07)",
-      }}
-    >
-      {/* Header */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <h2 style={{ fontSize: 18, fontWeight: 700, color: "#1a1a2e" }}>
-          Recent Listings
-        </h2>
-        <Space>
-          <Button
-            onClick={() => setActiveTab("all")}
-            style={{
-              background: activeTab === "all" ? "#1a1a2e" : "transparent",
-              color: activeTab === "all" ? "#fff" : "#888",
-              border: "none",
-              borderRadius: 6,
-              fontWeight: 500,
+    <div className="bg-white p-6 rounded-xl">
+
+      {/* HEADER */}
+      <div className="flex flex-col md:flex-row justify-between gap-3 mb-4">
+
+        <h2 className="text-lg font-bold">Recent Listings</h2>
+
+        <div className="flex gap-3">
+
+          {/* SEARCH */}
+          <Input
+            placeholder="Search listings..."
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setCurrentPage(1);
             }}
-          >
-            All
-          </Button>
-          <Button
-            onClick={() => setActiveTab("pending")}
-            style={{
-              background: activeTab === "pending" ? "#1a1a2e" : "transparent",
-              color: activeTab === "pending" ? "#fff" : "#888",
-              border: "none",
-              borderRadius: 6,
-              fontWeight: 500,
+            style={{ width: 200 }}
+          />
+
+          {/* FILTER */}
+          <Select
+            value={status}
+            onChange={(value) => {
+              setStatus(value);
+              setCurrentPage(1);
             }}
+            style={{ width: 150 }}
           >
-            Pending
-          </Button>
-          {/* Filter icon */}
-          <button
-            style={{
-              background: "none",
-              border: "1px solid #e0e0e0",
-              borderRadius: 6,
-              padding: "5px 10px",
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <line x1="4" y1="6" x2="20" y2="6" />
-              <line x1="8" y1="12" x2="16" y2="12" />
-              <line x1="11" y1="18" x2="13" y2="18" />
-            </svg>
-          </button>
-        </Space>
+            <Option value="all">All</Option>
+            <Option value="pending">Pending</Option>
+            <Option value="active">Active</Option>
+            <Option value="rejected">Rejected</Option>
+            <Option value="sold">Sold</Option>
+          </Select>
+
+        </div>
       </div>
 
-      <ConfigProvider
-        theme={{
-          components: {
-            Table: {
-              headerBg: "#ffffff",
-              headerColor: "#9b9b9b",
-              headerBorderRadius: 0,
-            },
-          },
+      {/* TABLE */}
+      <Table
+        loading={isFetching}
+        columns={columns}
+        dataSource={dataSource}
+        rowKey="id"
+        scroll={{ x: "max-content" }}
+        pagination={{
+          current: currentPage,
+          pageSize: limit,
+          total: meta?.total || 0,
+          showSizeChanger: false,
+          onChange: (page) => setCurrentPage(page),
         }}
-      >
-        <Table
-          columns={columns}
-          dataSource={dataSource}
-          pagination={false}
-          scroll={{ x: 500 }}
-        />
-      </ConfigProvider>
 
-      {/* Detail Modal */}
+        onRow={(record) => ({
+          onClick: (e) => {
+            if (e.target.closest(".no-row-click")) return;
+            handleView(record);
+          },
+        })}
+      />
+
+      {/* MODAL */}
       <Modal
-        open={isModalVisible}
-        onCancel={handleCancel}
+        open={!!selected}
+        onCancel={() => setSelected(null)}
         footer={null}
-        centered
+        title="Listing Details"
       >
-        {selectedListing && (
-          <div>
-            <h2 style={{ textAlign: "center", fontSize: 20, fontWeight: 700, marginBottom: 16 }}>
-              Listing Details
-            </h2>
-            {[
-              ["Name", selectedListing.name],
-              ["Category", selectedListing.category],
-              ["Seller", selectedListing.seller],
-              ["Price", selectedListing.price],
-              ["Status", selectedListing.status],
-            ].map(([label, value]) => (
-              <div
-                key={label}
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  padding: "12px 0",
-                  borderBottom: "1px solid #f0f0f0",
-                }}
-              >
-                <span style={{ color: "#888" }}>{label} :</span>
-                <span style={{ fontWeight: 500 }}>{value}</span>
-              </div>
-            ))}
+        {selected && (
+          <div className="space-y-2">
+            <p><b>Title:</b> {selected.title}</p>
+            <p><b>Category:</b> {selected.category_name}</p>
+            <p><b>Seller:</b> {selected.seller_name}</p>
+            <p><b>Price:</b> ${selected.price}</p>
+            <p><b>Status:</b> {selected.status}</p>
           </div>
         )}
       </Modal>
+
     </div>
   );
 };

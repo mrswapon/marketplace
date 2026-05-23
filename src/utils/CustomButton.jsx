@@ -8,13 +8,13 @@ const CustomButton = ({
 }) => {
   return (
       <div
-        className={`${className}  p-0.5 rounded-lg inline-block`}
+        className={`${className}   rounded-lg inline-block`}
       >
         <Button
           type="default"
           htmlType="submit"
           loading={loading}
-          className="w-full bg-[#0F3D2E] px-5 py-2 flex justify-center items-center gap-5  rounded-lg border-none"
+          className="w-full bg-[#0F3D2E] px-5 py-1 flex justify-center items-center gap-5  rounded-lg border-none"
           size="large"
           style={{
             display: "flex",

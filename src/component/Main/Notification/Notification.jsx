@@ -11,45 +11,45 @@ import {
 
 const Notification = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [filter, setFilter] = useState("");
+  const [filter, setFilter] = useState(null); // true | false | null
 
   const limit = 20;
 
-  // GET notifications
-  const { data, isLoading } = useGetNotificationsQuery(
-    {
-      page: currentPage,
-      limit,
-      isRead: filter || undefined,
-    },
-    {
-      refetchOnMountOrArgChange: true,
-    }
-  );
+  // ✅ API call (UPDATED)
+  const { data, isLoading, refetch } = useGetNotificationsQuery({
+    page: currentPage,
+    limit,
+    isRead: filter,
+  });
 
-  // PATCH read notification
   const [readNotifications] = useReadNotificationsMutation();
 
-  const notifications = data?.data || [];
-  const total = data?.meta?.total || 0;
+  // ✅ FIX: correct API mapping
+  const notifications = data?.data?.items || [];
+  const total = data?.data?.pagination?.total || 0;
 
   // mark as read
   const handleRead = async (id) => {
     try {
-      await readNotifications(id).unwrap();
+     const res = await readNotifications(id).unwrap();
+     console.log(res)
+     if(res?.success === true){
+        refetch()
+     }
     } catch (error) {
       console.log(error);
     }
   };
 
-  // reset page when filter changes
+  // reset page on filter change
   useEffect(() => {
     setCurrentPage(1);
   }, [filter]);
 
   const filters = [
-    { label: "Unread", value: "false" },
-    { label: "Read", value: "true" },
+    { label: "All", value: null },
+    { label: "Unread", value: false },
+    { label: "Read", value: true },
   ];
 
   return (
@@ -64,7 +64,7 @@ const Notification = () => {
           Notifications
         </h1>
 
-        {/* Filter buttons */}
+        {/* Filters */}
         <div className="flex gap-2">
           {filters.map((f) => (
             <button
@@ -92,8 +92,8 @@ const Notification = () => {
           ) : (
             notifications.map((item) => (
               <div
-                key={item._id}
-                onClick={() => handleRead(item._id)}
+                key={item.id}   // ✅ FIX: id (not _id)
+                onClick={() => handleRead(item.id)}
                 className={`border rounded-md p-4 flex items-center gap-3 cursor-pointer transition ${
                   item.isRead ? "opacity-60" : "bg-blue-50"
                 }`}
@@ -109,7 +109,9 @@ const Notification = () => {
                 {/* Content */}
                 <div className="flex-1">
                   <p className="font-semibold">{item.message}</p>
-                  <p className="text-gray-500 text-sm">{item.time}</p>
+                  <p className="text-gray-500 text-sm">
+                    {new Date(item.createdAt).toLocaleString()}
+                  </p>
                 </div>
 
                 {/* Button */}
@@ -117,7 +119,7 @@ const Notification = () => {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleRead(item._id);
+                      handleRead(item.id);
                     }}
                     className="text-blue-500 text-sm"
                   >

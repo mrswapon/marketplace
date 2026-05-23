@@ -22,14 +22,14 @@ const DashboardHome = () => {
           </div>
 
 
-          <div className="w-full h-full xl:flex justify-between items-center">
+          <div className="w-full h-full xl:flex  justify-between xl:space-x-4 space-y-4 xl:space-y-0">
             {/* Right Column: Pie Chart */}
-            <div className="w-full xxl:w-[24%] ">
+            <div className="w-full xl:w-[30%] ">
               <RecentActivity />
             </div>
           
             {/* Left Column: Chart */}
-            <div className="w-full xl:w-[74%]  rounded-lg ">
+            <div className="w-full xl:w-[70%]  rounded-lg ">
               <RecentTransactions />
             </div>
             

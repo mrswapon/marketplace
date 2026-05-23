@@ -2,32 +2,24 @@ import { baseApi } from "../../baseApi/baseApi";
 
 const settingApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getTermsCondition: builder.query({
-      query: () => ({
-        url: "/info/terms-condition",
+    settings: builder.query({
+      query: ({slug}) => ({
+        url: `/admin/settings?slug=${slug}`,
         method: "GET",
       }),
-      transformResponse: (response) => response?.data?.attributes,
+      transformResponse: (response) => response,
     }),
-    getPrivacyPolicy: builder.query({
-      query: () => ({
-        url: "/info/privacy-policy",
-        method: "GET",
-      }),
-      transformResponse: (response) => response?.data?.attributes,
-    }),
-    getAboutUs: builder.query({
-      query: () => ({
-        url: "/info/about-us",
-        method: "GET",
-      }),
-      transformResponse: (response) => response?.data?.attributes,
-    }),
+      addSetting: builder.mutation({
+  query: (data) => ({
+    url: "/admin/settings",
+    method: "POST",
+    body: data,
+  }),
+}),
   }),
 });
 
 export const {
-  useGetTermsConditionQuery,
-  useGetPrivacyPolicyQuery,
-  useGetAboutUsQuery,
+  useSettingsQuery,
+  useAddSettingMutation
 } = settingApi;

@@ -1,73 +1,114 @@
 import { IoChevronBack } from "react-icons/io5";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+import { useEffect, useState } from "react";
 import { Button, Form } from "antd";
-import ReactQuill from "react-quill"; // Import React Quill
-import "react-quill/dist/quill.snow.css"; // Import Quill styles
-import { useState } from "react";
+import he from "he";
+
 import CustomButton from "../../utils/CustomButton";
+import {
+  useAddSettingMutation,
+  useSettingsQuery,
+} from "../../redux/features/setting/settingApi";
 
 const EditTermsConditions = () => {
-  const [form] = Form.useForm();
-  const [content, setContent] = useState(
-    "<h1>Enter your 'Terms and Conditions' content here.</h1>"
-  ); // Default content for the Terms and Conditions section
+  const slug = "terms_and_conditions";
+  const navigate = useNavigate();
 
-  const handleSubmit = () => {
-    console.log("Updated Terms and Conditions Content:", content);
-    // Handle form submission, e.g., update the Terms and Conditions in the backend
+  const { data } = useSettingsQuery({ slug });
+  const [updateContent] = useAddSettingMutation();
+  const [form] = Form.useForm();
+
+  const [content, setContent] = useState("");
+
+  // ✅ Load API data into editor
+  useEffect(() => {
+    if (data?.data?.length > 0) {
+      const apiContent = data.data[0].content;
+
+      const decoded = he.decode(apiContent || "");
+
+      setContent(decoded);
+      form.setFieldsValue({ content: decoded });
+    }
+  }, [data, form]);
+
+  // ✅ Submit handler
+  const handleSubmit = async () => {
+    try {
+      const payload = {
+        slug,
+        title: "Terms and Conditions",
+        content,
+      };
+
+      const res = await updateContent(payload).unwrap();
+
+      if (res?.success === true) {
+        navigate("/settings/terms-conditions");
+      }
+    } catch (error) {
+      console.log("Update error:", error);
+    }
   };
 
   return (
-    <section className="w-full h-full min-h-screen ">
-      {/* Header Section */}
+    <section className="w-full min-h-screen">
+      {/* Header */}
       <div className="flex justify-between items-center py-5">
-        <div className="flex items-center">
+        <div className="flex items-center gap-2">
           <Link to="/settings/terms-conditions">
             <IoChevronBack className="text-2xl" />
           </Link>
-          <h1 className="text-2xl font-semibold">Edit Terms and Conditions</h1>
+
+          <h1 className="text-2xl font-semibold">
+            Edit Terms and Conditions
+          </h1>
         </div>
       </div>
 
-      {/* Form Section */}
+      {/* Form */}
       <div className="w-full p-6 rounded-lg shadow-md">
         <Form form={form} layout="vertical" onFinish={handleSubmit}>
-          {/* React Quill for Terms and Conditions Content */}
-          <Form.Item name="content" initialValue={content}>
+          <Form.Item name="content">
             <ReactQuill
               value={content}
-              onChange={(value) => setContent(value)}
+              onChange={setContent}
               modules={{
                 toolbar: [
-                  [{ header: [1, 2, 3, 4, 5, 6, false] }], // Header dropdown
-                  [{ font: [] }], // Font options
-                  [{ list: "ordered" }, { list: "bullet" }], // Ordered and bullet lists
-                  ["bold", "italic", "underline", "strike"], // Formatting options
-                  [{ align: [] }], // Text alignment
-                  [{ color: [] }, { background: [] }], // Color and background
-                  ["blockquote", "code-block"], // Blockquote and code block
-                  ["link", "image", "video"], // Link, image, and video upload
-                  [{ script: "sub" }, { script: "super" }], // Subscript and superscript
-                  [{ indent: "-1" }, { indent: "+1" }], // Indent
-                  ["clean"], // Remove formatting
+                  [{ header: [1, 2, 3, 4, 5, 6, false] }],
+                  [{ font: [] }],
+                  [{ list: "ordered" }, { list: "bullet" }],
+                  ["bold", "italic", "underline", "strike"],
+                  [{ align: [] }],
+                  [{ color: [] }, { background: [] }],
+                  ["blockquote", "code-block"],
+                  ["link", "image", "video"],
+                  [{ script: "sub" }, { script: "super" }],
+                  [{ indent: "-1" }, { indent: "+1" }],
+                  ["clean"],
                 ],
               }}
-              style={{ height: "300px" }} // Set the increased height
+              style={{ height: "300px" }}
             />
           </Form.Item>
 
-           {/* Update Button */}
-         <div className="w-full flex justify-end mt-20 md:mt-16">
-         <Button
-          type="primary"
-          htmlType="submit"
-          icon={<i className="fas fa-sync-alt"></i>} // Example FontAwesome icon
-          className="mt-1 px-5 rounded-lg bg-gray-500 py-5  border-none"
-        >
-          Cancel 
-        </Button>
-         <CustomButton className="p-1" >Update</CustomButton>
-         </div>
+          {/* Buttons */}
+          <div className="w-full flex justify-end gap-3 mt-20">
+            <Button
+             size="large"
+              className="mt-1"
+              htmlType="button"
+              onClick={() => navigate("/settings/terms-conditions")}
+            >
+              Cancel
+            </Button>
+
+            <CustomButton className="p-1" htmlType="submit">
+              Update
+            </CustomButton>
+          </div>
         </Form>
       </div>
     </section>

@@ -30,7 +30,7 @@ const profileApi = baseApi.injectEndpoints({
 
     getNotifications: builder.query({
     query: ({ page, limit, isRead }) => ({
-      url: `/notifications?page=${page}&limit=${limit}&isRead=${isRead}`,
+      url: `/admin/notifications?page=${page}&limit=${limit}&isRead=${isRead}`,
       method: "GET",
     }),
     providesTags: ["Notifications"],
@@ -38,7 +38,7 @@ const profileApi = baseApi.injectEndpoints({
    }),
    readNotifications: builder.mutation({
       query: (id) => ({
-        url: `/notifications/${id}/read`,
+        url: `/admin/notifications/${id}/read`,
         method: "PATCH",
       }),
       invalidatesTags: ["User"],

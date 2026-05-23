@@ -1,84 +1,27 @@
 /* eslint-disable react/no-unescaped-entities */
-import { AiOutlineUserAdd } from "react-icons/ai";
-import { BsCheckCircle } from "react-icons/bs";
-import { IoInformationCircleOutline } from "react-icons/io5";
-import { MdOutlineCreditCard } from "react-icons/md";
+
 import { useGetRecentActvitiesQuery } from "../../../redux/features/dashboard/dashboardApi";
 
+import { imageBaseUrl } from "../../../config/imageBaseUrl";
+import profile from "/logo/profile.jpg";
+
 const RecentActivity = () => {
-  const { data } = useGetRecentActvitiesQuery({
-  page: 1,
-  limit: 10,
-});
+  const { data, isLoading, isError } = useGetRecentActvitiesQuery({
+    page: 1,
+    limit: 10,
+  });
 
-console.log(data)
-  // ✅ Pure JSON Data (No JSX)
-  const activities = [
-    {
-      id: 1,
-      user: "Sarah Lane",
-      action: "created a new professional store",
-      target: "Urban Thrift",
-      time: "2 minutes ago",
-      type: "user",
-    },
-    {
-      id: 2,
-      action: "Listing approved",
-      target: "#88219 (Tesla Model 3)",
-      time: "14 minutes ago",
-      type: "success",
-    },
-    {
-      id: 3,
-      action: "New flag reported on",
-      target: "iPhone 15 Pro Max",
-      extra: "for suspicious price",
-      time: "45 minutes ago",
-      type: "warning",
-    },
-    {
-      id: 4,
-      action: "Premium subscription renewed for",
-      target: "Green Auto Group",
-      price: "$199.00",
-      time: "1 hour ago",
-      type: "payment",
-    },
-  ];
+  const activities = data?.data?.items || [];
 
-  // ✅ Icon + Style Controller
-  const getIcon = (type) => {
-    switch (type) {
-      case "user":
-        return {
-          icon: <AiOutlineUserAdd size={18} className="text-purple-600" />,
-          bg: "bg-purple-100",
-        };
-      case "success":
-        return {
-          icon: <BsCheckCircle size={17} className="text-green-600" />,
-          bg: "bg-green-100",
-        };
-      case "warning":
-        return {
-          icon: (
-            <IoInformationCircleOutline
-              size={18}
-              className="text-orange-500"
-            />
-          ),
-          bg: "bg-orange-100",
-        };
-      case "payment":
-        return {
-          icon: <MdOutlineCreditCard size={18} className="text-blue-600" />,
-          bg: "bg-blue-100",
-        };
-      default:
-        return { icon: null, bg: "" };
-    }
-  };
+
+
+  if (isLoading) {
+    return <div className="p-4">Loading...</div>;
+  }
+
+  if (isError) {
+    return <div className="p-4 text-red-500">Failed to load activities</div>;
+  }
 
   return (
     <div className="bg-white rounded-2xl p-4 shadow-sm w-full">
@@ -95,33 +38,61 @@ console.log(data)
       {/* List */}
       <div className="divide-y divide-gray-100">
         {activities.map((item) => {
-          const { icon, bg } = getIcon(item.type);
+
+
+          const actorAvatar = item.actor?.avatar
+            ? `${imageBaseUrl}${item.actor.avatar}`
+            : profile;
 
           return (
             <div key={item.id} className="flex items-start gap-3 py-3">
-              {/* Icon */}
-              <div
-                className={`w-9 h-9 rounded-full flex items-center justify-center ${bg}`}
-              >
-                {icon}
-              </div>
+
+              {/* Avatar */}
+              <img
+                src={actorAvatar}
+                crossOrigin="anonymous"
+                alt={item.actor?.name || "user"}
+                className="w-8 h-8 rounded-full object-cover"
+              />
 
               {/* Content */}
               <div className="text-sm text-gray-700 leading-relaxed">
+                {/* actor name */}
+                {item.actor?.name && (
+                  <span className="font-semibold">
+                    {item.actor.name}{" "}
+                  </span>
+                )}
+
+                {/* title */}
+                {item.metadata?.title && (
+                  <span> {item.metadata.title}</span>
+                )}
+
                 <div>
-                  {item.user && (
-                    <span className="font-semibold">{item.user} </span>
+                  {/* price */}
+                  {item.metadata?.price && (
+                    <span className="font-semibold mr-1">
+                      (${item.metadata.price})
+                    </span>
                   )}
-                  <span>{item.action} </span>
-                  <span className="font-semibold">{item.target}</span>
-                  {item.extra && <span> {item.extra}</span>}
-                  {item.price && (
-                    <span className="font-semibold"> ({item.price})</span>
-                  )}
+
+                  {/* message */}
+                  <span>
+                {item.message?.length > 50
+                 ? item.message.slice(0, 50) + "..."
+                    : item.message}
+                 </span>
                 </div>
 
+                {/* reason */}
+                {item.metadata?.reason && (
+                  <span> ({item.metadata.reason})</span>
+                )}
+
+                {/* time */}
                 <div className="text-xs text-gray-400 mt-1">
-                  {item.time}
+                  {new Date(item.created_at).toLocaleString()}
                 </div>
               </div>
             </div>
