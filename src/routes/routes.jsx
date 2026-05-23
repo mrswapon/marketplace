@@ -32,6 +32,8 @@ import ListingsDetails from "../component/Main/ProfessionalStores/ListingsDetail
 import Details from "../component/Main/Listings/Details";
 import SubscriptionsPage from "../page/SubscriptionsPage/SubscriptionsPage";
 import AdminRoutes from './AdminRoutes'
+import AddSubscriptions from "../component/Main/addSubscriptions/addSubscriptions";
+import EditSubscriptions from "../component/Main/editSubscriptions/editSubscriptions";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -108,6 +110,14 @@ const router = createBrowserRouter([
       {
         path: "subscriptions", 
         element: <SubscriptionsPage />
+      },
+      {
+        path: "AddSubscriptions",
+        element: <AddSubscriptions />
+      },
+      {
+        path:"subscriptions/:id",
+        element: <EditSubscriptions />
       },
       {
         path: "personal-info",
