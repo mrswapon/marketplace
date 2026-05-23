@@ -102,7 +102,6 @@ const EditAboutUs = () => {
             >
               Cancel
             </Button>
-
             <CustomButton className="" htmlType="submit">
               Update
             </CustomButton>

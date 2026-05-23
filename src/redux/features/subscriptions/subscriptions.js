@@ -4,10 +4,10 @@ const Subscriptions = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getSubscriptions: builder.query({
       query: () => ({
-        url: `/admin/settings/{{setting_id}}`,
+        url: "/admin/subscriptions",
         method: "GET",
       }),
-      transformResponse: (response) => response?.data?.attributes,
+      transformResponse: (response) => response?.data,
     }),
   }),
 });
