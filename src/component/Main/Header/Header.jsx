@@ -10,7 +10,7 @@ const Header = ({ toggleSidebar, title = "Dashboard" }) => {
   const { data } = useGetUserQuery();
   const user = data?.data;
   const userProfilePhoto = user?.avatarUrl ? `${imageBaseUrl}${user.avatarUrl}` : profile
-  console.log(userProfilePhoto);
+  
   const navigate = useNavigate();
   return (
     <div className="w-full px-5 py-3.5 bg-white flex rounded-md shadow-md justify-between items-center sticky top-2 left-0 z-10">

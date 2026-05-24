@@ -40,7 +40,30 @@ const userApi = baseApi.injectEndpoints({
       transformResponse: (response) => response?.data,
       providesTags: ["users"],
     }),
+    UserProducts: builder.query({
+      query: (id) => ({
+        url: `/admin/users/${id}/products`,
+        method: "GET",
+      }),
+      transformResponse: (response) => response?.data,
+      providesTags: ["users"],
+    }),
+    ActiveStories: builder.query({
+      query: ({isActive, id}) => ({
+        url: `/admin/stories?isActive=${isActive}&userId=${id}`,
+        method: "GET",
+      }),
+      transformResponse: (response) => response?.data,
+      providesTags: ["users"],
+    }),
   }),
 });
 
-export const { useGetAllStatsQuery, useGetAllUserQuery, useUpdateStatusMutation, useSingleUserQuery } = userApi;
+export const { 
+                useGetAllStatsQuery, 
+                useGetAllUserQuery, 
+                useUpdateStatusMutation, 
+                useSingleUserQuery, 
+                useUserProductsQuery,
+                useActiveStoriesQuery
+            } = userApi;
