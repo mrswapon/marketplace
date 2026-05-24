@@ -1,10 +1,15 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
+import { toast } from "sonner";
 import { FiEdit2, FiTrash2, FiCheckCircle } from "react-icons/fi";
-import { useGetSubscriptionsQuery } from "../../../redux/features/subscriptions/subscriptions";
+import {
+  useDeleteSubscriptionMutation,
+  useGetSubscriptionsQuery,
+  useUpdateStatusMutation,
+} from "../../../redux/features/subscriptions/subscriptions";
 import { Link } from "react-router-dom";
 
-/* ---------------- Toggle Component ---------------- */
+/* ---------------- Toggle ---------------- */
 const Toggle = ({ checked, onChange }) => (
   <label className="relative inline-block w-11 h-6 cursor-pointer flex-shrink-0 z-10">
     <input
@@ -33,16 +38,27 @@ Toggle.propTypes = {
 };
 
 /* ---------------- Plan Card ---------------- */
-const PlanCard = ({ plan }) => {
+const PlanCard = ({ plan, onDelete, onStatusUpdate }) => {
   const [active, setActive] = useState(plan?.isActive);
-  console.log(plan)
+
+  const handleToggle = async () => {
+    const newStatus = !active;
+    setActive(newStatus); // optimistic UI
+    try {
+      await onStatusUpdate(plan?._id, newStatus);
+    } catch (error) {
+      setActive(!newStatus); // rollback
+      toast.error(error?.data?.message || "Failed to update status");
+    }
+  };
+
   return (
     <div className="bg-white rounded-2xl p-5 w-72 relative shadow-sm border border-gray-100 flex flex-col justify-between">
       
-      {/* Top Badge + Actions */}
+      {/* Header */}
       <div className="flex justify-between items-start mb-4">
         <span
-          className={`inline-flex items-center gap-1.5 text-[10px] font-bold tracking-widest px-2.5 py-1 rounded-full uppercase ${
+          className={`inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase ${
             active ? "bg-green-50 text-green-600" : "bg-red-50 text-red-500"
           }`}
         >
@@ -57,122 +73,102 @@ const PlanCard = ({ plan }) => {
         <div className="flex gap-4">
           <Link
             to={`/subscriptions/${plan?._id}`}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="text-gray-400 hover:text-gray-600"
           >
             <FiEdit2 size={15} />
           </Link>
 
-          <button className="text-red-400 hover:text-red-600 transition-colors">
+          <button
+            onClick={() => onDelete(plan?._id)}
+            className="text-red-400 hover:text-red-600"
+          >
             <FiTrash2 size={15} />
           </button>
         </div>
       </div>
 
       {/* Title */}
-      <div className="flex items-center space-x-2">
-          <div>
-            {plan?.icon}
-        </div>
-        <div className="">
-          <p className="text-[15px] font-bold text-gray-900 leading-tight">
-            {plan?.name}
-          </p>
-          <p className="text-[12px] text-gray-400 capitalize">
-            {plan?.billingType} plan
-          </p>
-        </div>
+      <div>
+        <p className="text-[15px] font-bold text-gray-900">{plan?.name}</p>
+        <p className="text-[12px] text-gray-400">{plan?.billingType} plan</p>
       </div>
 
-      {/* Description */}
-      <p className="text-[13px] text-gray-500 leading-relaxed mb-4">
-        {plan?.description}
-      </p>
-
       {/* Features */}
-      <ul className="flex flex-col gap-2 mb-4">
-        {plan?.features?.map((feature, index) => (
-          <li
-            key={index}
-            className="flex items-center gap-2 text-[13px] text-gray-600"
-          >
-            <FiCheckCircle className="text-gray-400 flex-shrink-0" size={15} />
-            {feature}
+      <ul className="mt-3 space-y-2">
+        {plan?.features?.map((f, i) => (
+          <li key={i} className="flex items-center gap-2 text-[13px]">
+            <FiCheckCircle size={14} className="text-gray-400" />
+            {f}
           </li>
         ))}
       </ul>
 
       {/* Price */}
-      <div className="mb-4">
-        <p className="text-[10px] font-bold tracking-widest text-gray-400 uppercase mb-0.5">
-          Starting At
+      <div className="mt-4">
+        <p className="text-[28px] font-bold text-[#0F3D2E]">
+          {plan?.currency} {plan?.price}
         </p>
-        <div className="flex items-baseline gap-1.5">
-          <span className="text-[28px] font-extrabold text-[#0F3D2E] leading-none">
-            {plan?.currency} {plan?.price}
-          </span>
-          <span className="text-sm text-gray-400 capitalize">
-            / {plan?.billingType}
-          </span>
-        </div>
       </div>
 
-      {/* Toggle (FIXED always visible) */}
-      <div className="flex justify-between items-center border-t border-gray-100 pt-4 w-full mt-auto">
-        <span className="text-[13px] text-gray-500">Active</span>
-        <Toggle
-          checked={active}
-          onChange={() => setActive((prev) => !prev)}
-        />
+      {/* Toggle */}
+      <div className="flex justify-between items-center border-t pt-3 mt-4">
+        <span className="text-sm text-gray-500">Active</span>
+
+        <Toggle checked={active} onChange={handleToggle} />
       </div>
     </div>
   );
 };
 
 PlanCard.propTypes = {
-  plan: PropTypes.shape({
-    _id: PropTypes.string,
-    name: PropTypes.string,
-    features: PropTypes.arrayOf(PropTypes.string),
-    description: PropTypes.string,
-    price: PropTypes.number,
-    icon:PropTypes.string,
-    currency: PropTypes.string,
-    billingType: PropTypes.string,
-    isActive: PropTypes.bool,
-  }).isRequired,
+  plan: PropTypes.object.isRequired,
+  onDelete: PropTypes.func.isRequired,
+  onStatusUpdate: PropTypes.func.isRequired,
 };
 
-/* ---------------- Main Page ---------------- */
+/* ---------------- Main ---------------- */
 const Subscriptions = () => {
-  const {
-    data: subscriptions,
-    isLoading,
-    isError,
-  } = useGetSubscriptionsQuery();
+  const { data: subscriptions, isLoading, isError, refetch } = useGetSubscriptionsQuery();
 
-  const plans = subscriptions;
+  const [deleteSubscription] = useDeleteSubscriptionMutation();
+  const [updateStatus] = useUpdateStatusMutation();
 
-  if (isLoading) {
-    return <div className="py-10 text-center text-gray-500">Loading...</div>;
-  }
+  const handleDelete = async (id) => {
+    try {
+     const res = await deleteSubscription(id).unwrap();
+      if(res?.success === true){
+        toast.success("Deleted successfully");
+        refetch();
+      }
+    } catch (error) {
+      toast.error("Delete failed");
+    }
+  };
 
-  if (isError) {
-    return (
-      <div className="py-10 text-center text-red-500">
-        Failed to load subscriptions
-      </div>
-    );
-  }
+  const handleStatusUpdate = async (id, isActive) => {
+    try {
+      const res =  await updateStatus({ id, data:{ isActive } }).unwrap();
+      if(res?.success === true){
+        toast.success("Update Status successfully");
+        refetch();
+      }
+    } catch (error) {
+      toast.error("Update failed");
+    }
+  };
+
+  if (isLoading) return <p className="text-center py-10">Loading...</p>;
+  if (isError) return <p className="text-center text-red-500">Error</p>;
 
   return (
-    <div className="py-5 md:py-7">
-      
+    <section className="py-7">
       {/* Header */}
-      <div className="flex justify-between items-start gap-4 mb-6">
+      <div className="flex justify-between items-start gap-4 mb-6 pl-1">
         <div>
           <h2 className="text-[22px] font-bold text-gray-900 mb-1">
             Subscription Plans
           </h2>
+
           <p className="hidden lg:block text-[16px] text-gray-400">
             Manage tiered pricing structures and marketplace access.
           </p>
@@ -185,14 +181,18 @@ const Subscriptions = () => {
           Add New Plan
         </Link>
       </div>
-
-      {/* Cards */}
       <div className="flex gap-5 flex-wrap">
-        {plans?.map((plan) => (
-          <PlanCard key={plan?._id} plan={plan} />
-        ))}
-      </div>
+      
+      {subscriptions?.map((plan) => (
+        <PlanCard
+          key={plan?._id}
+          plan={plan}
+          onDelete={handleDelete}
+          onStatusUpdate={handleStatusUpdate}
+        />
+      ))}
     </div>
+    </section>
   );
 };
 

@@ -2,72 +2,86 @@ import { TfiWallet } from "react-icons/tfi";
 import { LuRocket } from "react-icons/lu";
 import { PiBookOpenTextLight } from "react-icons/pi";
 import { TrendingUp } from "lucide-react";
-
-const stats = [
-  {
-    label: "TOTAL EARNINGS",
-    value: "$142,850.00",
-    sub: "12.5% increase from last month",
-    up: true,
-    iconColor: "text-gray-500",
-    iconBg: "bg-gray-100",
-    icon: TfiWallet,
-  },
-  {
-    label: "BOOST REVENUE",
-    value: "$48,210.00",
-    sub: "34% of total revenue",
-    up: null,
-    iconColor: "text-orange-400",
-    iconBg: "bg-orange-50",
-    icon: LuRocket,
-  },
-  {
-    label: "STORY REVENUE",
-    value: "$32,640.00",
-    sub: "22% of total revenue",
-    up: null,
-    iconColor: "text-blue-400",
-    iconBg: "bg-blue-50",
-    icon: PiBookOpenTextLight,
-  },
-];
+import { useGetPaymentStatsQuery } from "../../../redux/features/earnings/earningsApi";
 
 const EarningsStatus = () => {
+  const { data } = useGetPaymentStatsQuery();
+
+  const statsData = data ?? {
+    totalEarnings: 0,
+    totalTransactions: 0,
+    boost: { amount: 0, percentage: 0 },
+    story: { amount: 0, percentage: 0 },
+  };
+
+  const stats = [
+    {
+      label: "Total earnings",
+      value: `$${statsData.totalEarnings.toFixed(2)}`,
+      sub: `${statsData.totalTransactions} total transactions`,
+      up: statsData.totalTransactions > 0,
+      iconColor: "text-gray-500",
+      iconBg: "bg-gray-100",
+      icon: TfiWallet,
+    },
+    {
+      label: "Boost revenue",
+      value: `$${statsData.boost.amount.toFixed(2)}`,
+      sub: `${statsData.boost.percentage}% of total revenue`,
+      up: statsData.boost.percentage > 0,
+      iconColor: "text-amber-600",
+      iconBg: "bg-amber-50",
+      icon: LuRocket,
+    },
+    {
+      label: "Story revenue",
+      value: `$${statsData.story.amount.toFixed(2)}`,
+      sub: `${statsData.story.percentage}% of total revenue`,
+      up: statsData.story.percentage > 0,
+      iconColor: "text-blue-600",
+      iconBg: "bg-blue-50",
+      icon: PiBookOpenTextLight,
+    },
+  ];
+
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 pt-7">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-6">
       {stats.map((s) => {
         const Icon = s.icon;
+
         return (
           <div
             key={s.label}
-            className="bg-white rounded-2xl p-5 flex flex-col gap-3 border border-gray-100 shadow-sm"
+            className="bg-white rounded-xl p-5 flex flex-col gap-2.5 border border-gray-100 hover:border-gray-200 transition-colors duration-200"
           >
-            {/* Top Row: Label + Icon */}
+            {/* Top Row */}
             <div className="flex items-center justify-between">
-              <p className="text-[10px] font-semibold tracking-widest uppercase text-gray-400">
+              <p className="text-[10px] font-medium tracking-widest uppercase text-gray-400">
                 {s.label}
               </p>
               <div
                 className={`w-8 h-8 rounded-lg ${s.iconBg} flex items-center justify-center`}
               >
-                <Icon size={16} className={s.iconColor} />
+                <Icon size={15} className={s.iconColor} />
               </div>
             </div>
 
+            {/* Divider */}
+            <div className="h-px bg-gray-100" />
+
             {/* Value */}
-            <p className="text-2xl font-semibold text-gray-900 tracking-tight">
+            <p className="text-[26px] font-medium text-gray-900 tracking-tight leading-none">
               {s.value}
             </p>
 
             {/* Sub text */}
-            <div className="flex items-center gap-1">
-              {s.up === true && (
-                <TrendingUp size={13} className="text-green-500 flex-shrink-0" />
+            <div className="flex items-center gap-1.5">
+              {s.up && (
+                <TrendingUp size={12} className="text-green-500 flex-shrink-0" />
               )}
               <p
-                className={`text-xs font-medium ${
-                  s.up === true ? "text-green-500" : "text-gray-400"
+                className={`text-xs ${
+                  s.up ? "text-green-500" : "text-gray-400"
                 }`}
               >
                 {s.sub}

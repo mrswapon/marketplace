@@ -303,7 +303,7 @@ const AddSubscriptions = () => {
           </div>
 
           {/* RIGHT COLUMN */}
-          <div className="w-56 flex flex-col gap-4">
+          <div className="w-[35%] flex flex-col gap-4">
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
               {/* Status */}
               <div className="flex items-center justify-between mb-4">
