@@ -1,9 +1,17 @@
 import { CheckCircle, LayoutGrid, Timer } from "lucide-react";
+import { useGetCategoriesStatsQuery } from "../../../redux/features/categories/categories";
 
-const stats = [
+
+
+const CategoriesStatus = () => {
+ 
+ const {data} = useGetCategoriesStatsQuery();
+ console.log(data)
+
+  const stats = [
   {
     label: "Active Categories",
-    value: "14",
+    value: data?.total_categories,
     change: "12%",
     up: true,
     iconColor: "text-green-500",
@@ -12,7 +20,7 @@ const stats = [
   },
   {
     label: "Total Listings",
-    value: "52,223",
+    value: data?.total_listings,
     change: "8.4%",
     up: true,
     iconColor: "text-blue-500",
@@ -21,7 +29,7 @@ const stats = [
   },
   {
     label: "Pending Review",
-    value: "1,292",
+    value: data?.pending_review,
     change: "2.1%",
     up: false,
     iconColor: "text-amber-500",
@@ -29,8 +37,6 @@ const stats = [
     icon: Timer,
   },
 ];
-
-const CategoriesStatus = () => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1 lg:gap-6 py-5 md:py-8">
       {stats.map((s) => {
