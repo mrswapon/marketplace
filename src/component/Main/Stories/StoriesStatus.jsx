@@ -1,30 +1,35 @@
 import { BookOpen, CalendarClock, BadgeCheck } from "lucide-react";
+import { useGetStoryStatsQuery,} from "../../../redux/features/storie/storie";
 
-const stats = [
+
+
+const StoriesStatus = () => {
+  const {data} = useGetStoryStatsQuery();
+
+  const stats = [
   {
     label: "Total Stories",
-    value: "1,284",
+    value: data?.data?.totalStories,
     iconColor: "#5b6cf0",
     valueColor: "#5b6cf0",
     icon: BookOpen,
   },
   {
     label: "Pending Approval",
-    value: "42",
+    value: data?.data?.expiredStories,
     iconColor: "#e09b2d",
     valueColor: "#e09b2d",
     icon: CalendarClock,
   },
   {
     label: "Active Stories",
-    value: "892",
+    value: data?.data?.activeStories,
     iconColor: "#3db87a",
     valueColor: "#3db87a",
     icon: BadgeCheck,
   },
 ];
 
-const StoriesStatus = () => {
   return (
     <div
     

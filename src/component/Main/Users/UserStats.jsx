@@ -1,9 +1,14 @@
 import { Users, ShieldCheck, Ban } from "lucide-react";
+import { useGetAllStatsQuery } from "../../../redux/features/user/userApi";
 
-const stats = [
+
+
+const UserStats = () => {
+  const {data} = useGetAllStatsQuery();
+  const stats = [
   {
     label: "Total Users",
-    value: "24,512",
+    value: data?.data?.totalUsers,
     change: "+12%",
     up: true,
     iconColor: "text-green-700",
@@ -12,7 +17,7 @@ const stats = [
   },
   {
     label: "Verified Users",
-    value: "18,290",
+    value: data?.data?.activeUsers,
     change: "+5.2%",
     up: true,
     iconColor: "text-teal-700",
@@ -21,7 +26,7 @@ const stats = [
   },
   {
     label: "Blocked Accounts",
-    value: "86",
+    value: data?.data?.blockedUsers,
     change: "-2.1%",
     up: false,
     iconColor: "text-red-700",
@@ -30,9 +35,8 @@ const stats = [
   },
 ];
 
-const UserStats = () => {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 py-5 md:py-8">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 py-5 md:mt-7">
       {stats.map((s) => {
         const Icon = s.icon;
         return (

@@ -34,6 +34,7 @@ import SubscriptionsPage from "../page/SubscriptionsPage/SubscriptionsPage";
 import AdminRoutes from './AdminRoutes'
 import AddSubscriptions from "../component/Main/addSubscriptions/addSubscriptions";
 import EditSubscriptions from "../component/Main/editSubscriptions/editSubscriptions";
+import UsersDetailes from "../component/Main/Users/usersDetailes";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -51,6 +52,10 @@ const router = createBrowserRouter([
       {
         path: "users",
         element: <UsersPage />,
+      },
+      {
+        path: "users/:id",
+        element: <UsersDetailes />,
       },
       {
         path: "Earnings",
