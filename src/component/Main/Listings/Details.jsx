@@ -3,22 +3,10 @@
 import { useState } from "react";
 import { Mail, Phone, Calendar, ShieldCheck, MapPin } from "lucide-react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Tag } from "antd";
 import { useGetSingleListingQuery, useUpdateListingStatusMutation, useDeleteListingMutation } from "../../../redux/features/listings/listingsApi";
 import { imageBaseUrl } from "../../../config/imageBaseUrl";
 
-/* -------------------------------
-   STATUS HELPERS
---------------------------------*/
-const getTagColor = (status) => {
-  switch (status) {
-    case "active": return "green";
-    case "draft": return "orange";
-    case "sold": return "blue";
-    case "rejected": return "red";
-    default: return "default";
-  }
-};
+
 
 const getTagLabel = (status) => {
   switch (status) {

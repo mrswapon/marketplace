@@ -1,3 +1,4 @@
+// src/routes/routes.jsx
 /* eslint-disable no-unused-vars */
 import { createBrowserRouter } from "react-router-dom";
 import MainLayout from "../layout/MainLayout";
@@ -35,6 +36,7 @@ import AdminRoutes from './AdminRoutes'
 import AddSubscriptions from "../component/Main/addSubscriptions/addSubscriptions";
 import EditSubscriptions from "../component/Main/editSubscriptions/editSubscriptions";
 import UsersDetailes from "../component/Main/Users/usersDetailes";
+import Coupon from "../component/Main/Coupon/Coupon";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -59,7 +61,7 @@ const router = createBrowserRouter([
       },
       {
         path:"Coupon",
-        element: "/coupon"
+        element: <Coupon></Coupon>
       },
       {
         path: "Earnings",

@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 import {
   useGetListingsQuery,
   useUpdateListingStatusMutation,
-  useDeleteListingMutation,
+  // useDeleteListingMutation,
 } from "../../../redux/features/listings/listingsApi";
 
 /* -------------------------------
@@ -44,7 +44,7 @@ const Listings = () => {
   --------------------------------*/
   const { data, isLoading } = useGetListingsQuery(queryParams);
   const [updateListingStatus] = useUpdateListingStatusMutation();
-  const [deleteListing] = useDeleteListingMutation();
+  // const [deleteListing] = useDeleteListingMutation();
 
   const listings = data?.items ?? [];
   const total = data?.pagination?.total ?? 0;
