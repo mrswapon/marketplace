@@ -1,4 +1,3 @@
-// src/routes/routes.jsx
 /* eslint-disable no-unused-vars */
 import { createBrowserRouter } from "react-router-dom";
 import MainLayout from "../layout/MainLayout";
@@ -10,7 +9,7 @@ import NewPassword from "../page/Auth/NewPassword/NewPassword";
 import PersonalInformationPage from "../page/PersonalInformation/PersonalInformationPage";
 import SettingsPage from "../page/Settings/SettingsPage";
 import AboutUsPage from "../page/AboutUs/AboutUsPage";
-import EditAboutUs from "../page/EditAboutUs/EditAboutUs";
+import EditAboutUs from "../page/EditAboutUs/EditAboutUs"; 
 import PrivacyPolicyPage from "../page/PrivacyPolicy/PrivacyPolicyPage";
 import EditPersonalInformationPage from "../page/EditPersonalInformationPage/EditPersonalInformationPage";
 import EditPrivacyPolicy from "../page/EditPrivacyPolicy/EditPrivacyPolicy";
