@@ -12,6 +12,7 @@ import { FaShapes, FaUserAlt } from "react-icons/fa";
 import { MdDashboard } from "react-icons/md";
 import { GiOpenBook } from "react-icons/gi";
 import { IoGift } from "react-icons/io5";
+import { BiSolidOffer } from "react-icons/bi";
 
 const sidebarItems = [
   { path: "/", name: "Dashboard", icon: <MdDashboard className="size-6" /> },
@@ -21,6 +22,7 @@ const sidebarItems = [
   { path: "/stories", name: "Stories", icon: <GiOpenBook className="size-6" /> },
   { path: "/professional-stores", name: "Pro Stores", icon: <IoGift className="size-6" /> },
   { path: "/subscriptions", name: "Subscriptions", icon: <FaCrown  className="size-6" /> },
+  { path: "/coupon", name: "Coupon", icon: <BiSolidOffer  className="size-6" /> },
   { path: "/Earnings", name: "Payments", icon: <RiMoneyDollarCircleFill className="size-6" /> },
   { path: "/settings", name: "Settings", icon: <IoSettingsSharp className="size-6" /> },
 ];

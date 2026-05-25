@@ -42,7 +42,7 @@ const Categories = baseApi.injectEndpoints({
     // ADD CATEGORY
     addCategory: builder.mutation({
       query: (data) => ({
-        url: "/admin/categories",
+        url: "admin/categories",
         method: "POST",
         body: data,
       }),

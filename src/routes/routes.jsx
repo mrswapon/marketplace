@@ -58,6 +58,10 @@ const router = createBrowserRouter([
         element: <UsersDetailes />,
       },
       {
+        path:"Coupon",
+        element: "/coupon"
+      },
+      {
         path: "Earnings",
         element: <EarningsPage />,
       },
