@@ -36,6 +36,7 @@ import AddSubscriptions from "../component/Main/addSubscriptions/addSubscription
 import EditSubscriptions from "../component/Main/editSubscriptions/editSubscriptions";
 import UsersDetailes from "../component/Main/Users/usersDetailes";
 import Coupon from "../component/Main/Coupon/Coupon";
+import Boosting from "../component/Main/Boosting/Boosting";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -53,6 +54,10 @@ const router = createBrowserRouter([
       {
         path: "users",
         element: <UsersPage />,
+      },
+      {
+        path:"/boosting",
+        element: <Boosting />
       },
       {
         path: "users/:id",
