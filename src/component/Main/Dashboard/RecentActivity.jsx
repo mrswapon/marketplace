@@ -37,7 +37,7 @@ const RecentActivity = () => {
 
       {/* List */}
       <div className="divide-y divide-gray-100">
-        {activities.map((item) => {
+        {activities.slice(0, 8).map((item) => {
 
 
           const actorAvatar = item.actor?.avatar
@@ -45,7 +45,7 @@ const RecentActivity = () => {
             : profile;
 
           return (
-            <div key={item.id} className="flex items-start gap-3 py-3">
+            <div key={item.id} className="flex items-start gap-3 py-2.5">
 
               {/* Avatar */}
               <img
