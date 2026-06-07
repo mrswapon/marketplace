@@ -35,7 +35,7 @@ const boostingApi = baseApi.injectEndpoints({
     // ADD BOOSTING
     addBoosting: builder.mutation({
       query: (data) => ({
-        url: "/admin/Boosting",
+        url: "/admin/boost-plans",
         method: "POST",
         body: data,
       }),
@@ -45,7 +45,7 @@ const boostingApi = baseApi.injectEndpoints({
     // UPDATE BOOSTING
     updateBoosting: builder.mutation({
       query: ({ id, data }) => ({
-        url: `/admin/Boosting/${id}`,
+        url: `/admin/boost-plans/${id}`,
         method: "PATCH",
         body: data,
       }),
@@ -55,7 +55,7 @@ const boostingApi = baseApi.injectEndpoints({
     // DELETE BOOSTING
     deleteBoosting: builder.mutation({
       query: (id) => ({
-        url: `/admin/Boosting/${id}`,
+        url: `/admin/boost-plans/${id}`,
         method: "DELETE",
       }),
       invalidatesTags: ["Boosting"],

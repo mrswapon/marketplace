@@ -1,11 +1,11 @@
-import { useGetBoostingQuery } from "../../../redux/features/boosting/boosting";
+import AllBoosting from "./AllBoosting";
+
 
 const Boosting = () => {
- const { data:boostingData } = useGetBoostingQuery();
- console.log("Boosting Data:", boostingData);
+
  return (
- <div>
- <h2>Welcome to the Boosting page</h2>
+ <div className="py-5">
+   <AllBoosting />
  </div>
  );
 };
