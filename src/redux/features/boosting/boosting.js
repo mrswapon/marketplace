@@ -2,6 +2,7 @@ import { baseApi } from "../../baseApi/baseApi";
 
 const boostingApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
+
     // GET ALL BOOSTING
     getBoosting: builder.query({
       query: () => ({
@@ -15,7 +16,7 @@ const boostingApi = baseApi.injectEndpoints({
     // GET BOOSTING STATS
     getBoostingStats: builder.query({
       query: () => ({
-        url: "/admin/Boosting/stats",
+        url: "admin/boosting/stats",
         method: "GET",
       }),
       transformResponse: (response) => response?.data,
@@ -60,6 +61,7 @@ const boostingApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Boosting"],
     }),
+   
   }),
 });
 
@@ -69,5 +71,5 @@ export const {
   useGetSingleBoostingQuery,
   useAddBoostingMutation,
   useUpdateBoostingMutation,
-  useDeleteBoostingMutation,
+  useDeleteBoostingMutation
 } = boostingApi;
