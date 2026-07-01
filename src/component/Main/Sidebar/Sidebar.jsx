@@ -14,6 +14,7 @@ import { GiOpenBook } from "react-icons/gi";
 import { IoGift } from "react-icons/io5";
 import { BiSolidOffer } from "react-icons/bi";
 import { BsFillFileSpreadsheetFill, BsBoxSeam, BsBookHalf, BsCartCheck, BsJournalCheck, BsPersonCheck } from "react-icons/bs";
+import { RiAdvertisementFill } from "react-icons/ri";
 
 const sidebarItems = [
   { path: "/", name: "Dashboard", icon: <MdDashboard className="size-6" /> },
@@ -25,6 +26,7 @@ const sidebarItems = [
   { path: "/subscriptions", name: "Subscriptions", icon: <FaCrown  className="size-6" /> },
   { path: "/coupon", name: "Coupon", icon: <BiSolidOffer  className="size-6" /> },
   { path: "/boosting", name: "Boosting", icon: <BsFillFileSpreadsheetFill   className="size-6" /> },
+  { path: "/advertisement", name: "Advertisement", icon: <RiAdvertisementFill className="size-6" /> },
   { path: "/listing-packages", name: "Listing Pkgs", icon: <BsBoxSeam className="size-6" /> },
   { path: "/story-packages", name: "Story Pkgs", icon: <BsBookHalf className="size-6" /> },
   { path: "/listing-purchases", name: "Listing Sales", icon: <BsCartCheck className="size-6" /> },
@@ -48,12 +50,12 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
     <div>
       {/* Desktop Sidebar */}
       <div className="hidden md:flex flex-col w-[220px] lg:w-[260px] xl:w-[280px] bg-[#FFFFFF] fixed h-screen shadow-xl">
-        <div className="flex flex-col h-full justify-between">
-          <div>
-            <div className="flex flex-col items-center pb-4  text-[#6B7280] my-2 ">
+        <div className="flex flex-col h-full justify-between min-h-0">
+          <div className="flex flex-col min-h-0">
+            <div className="flex flex-col items-center pb-4 text-[#6B7280] my-2 shrink-0">
               <img src={logo} alt="logo" className="w-[105px] h-[100px]" />
             </div>
-            <ul className="flex flex-col gap-3">
+            <ul className="flex flex-col gap-3 overflow-y-auto flex-1 min-h-0">
               {sidebarItems.map((item) => (
                 <NavLink
                   key={item.name}
@@ -72,7 +74,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
           </div>
           <button
             onClick={() => setShowModal(true)}
-            className="flex items-center gap-2 px-10 py-4 hover:text-[#0F3D2E] text-[#6B7280] mb-4"
+            className="flex items-center gap-2 px-10 py-4 hover:text-[#0F3D2E] text-[#6B7280] mb-4 shrink-0"
           >
             <IoIosLogOut className="ml-2 size-8 bg-red-500 p-1 text-[#FFFFFF] rounded-md" />
             <span>Logout</span>

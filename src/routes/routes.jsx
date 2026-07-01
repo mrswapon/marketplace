@@ -37,6 +37,7 @@ import EditSubscriptions from "../component/Main/editSubscriptions/editSubscript
 import UsersDetailes from "../component/Main/Users/usersDetailes";
 import Coupon from "../component/Main/Coupon/Coupon";
 import Boosting from "../component/Main/Boosting/Boosting";
+import Advertisement from "../component/Main/Advertisement/Advertisement";
 import ListingPackagesPage from "../page/ListingPackagesPage/ListingPackagesPage";
 import StoryPackagesPage from "../page/StoryPackagesPage/StoryPackagesPage";
 import ListingPurchasesPage from "../page/ListingPurchasesPage/ListingPurchasesPage";
@@ -158,6 +159,10 @@ const router = createBrowserRouter([
       {
         path:"subscriptions/:id",
         element: <EditSubscriptions />
+      },
+      {
+        path:"/advertisement",
+        element: <Advertisement />
       },
       {
         path: "personal-info",
