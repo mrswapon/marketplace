@@ -4,6 +4,8 @@ import { AiOutlineEye } from "react-icons/ai";
 import { FiCheck, FiX } from "react-icons/fi";
 
 import { useListRecentListingsQuery } from "../../../redux/features/dashboard/dashboardApi";
+import { useUpdateListingStatusMutation } from "../../../redux/features/listings/listingsApi";
+import { toast } from "sonner";
 import { imageBaseUrl } from "../../../config/imageBaseUrl";
 import profile from "/logo/profile.jpg";
 
@@ -15,6 +17,26 @@ const RecentListings = () => {
   const [status, setStatus] = useState("all");
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState(null);
+
+  const [updateListingStatus] = useUpdateListingStatusMutation();
+
+  const handleApprove = async (record) => {
+    try {
+      await updateListingStatus({ id: record.id, status: "active" }).unwrap();
+      toast.success("Listing approved successfully");
+    } catch (error) {
+      toast.error(error?.data?.message || "Failed to approve listing");
+    }
+  };
+
+  const handleReject = async (record) => {
+    try {
+      await updateListingStatus({ id: record.id, status: "rejected" }).unwrap();
+      toast.success("Listing rejected successfully");
+    } catch (error) {
+      toast.error(error?.data?.message || "Failed to reject listing");
+    }
+  };
 
   // API
   const { data, isFetching } = useListRecentListingsQuery({
@@ -100,12 +122,12 @@ const RecentListings = () => {
         <div className="flex gap-3 no-row-click text-lg">
           <FiCheck
             className="text-gray-400 hover:text-green-500 cursor-pointer"
-            onClick={() => console.log("Approve", record)}
+            onClick={() => handleApprove(record)}
           />
 
           <FiX
             className="text-gray-400 hover:text-red-500 cursor-pointer"
-            onClick={() => console.log("Reject", record)}
+            onClick={() => handleReject(record)}
           />
 
           <AiOutlineEye
