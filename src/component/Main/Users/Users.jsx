@@ -6,7 +6,7 @@ import UserStats from "./UserStats";
 import { useGetAllUserQuery } from "../../../redux/features/user/userApi";
 import { imageBaseUrl } from "../../../config/imageBaseUrl";
 import profile from "/logo/profile.jpg";
-import { useUpdateStatusMutation } from "../../../redux/features/subscriptions/subscriptions";
+import { useUpdateStatusMutation } from "../../../redux/features/user/userApi";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 

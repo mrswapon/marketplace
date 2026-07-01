@@ -51,10 +51,9 @@ const subscriptionsApi = baseApi.injectEndpoints({
     }),
 
     updateStatus: builder.mutation({
-      query: ({ id, data }) => ({
-        url: `/admin/users/${id}/toggle-status`,
+      query: (id) => ({
+        url: `/admin/subscriptions/${id}/toggle-status`,
         method: "PATCH",
-        body: data,
       }),
 
       invalidatesTags: ["subscriptions"],

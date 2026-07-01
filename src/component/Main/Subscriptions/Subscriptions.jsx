@@ -42,12 +42,12 @@ const PlanCard = ({ plan, onDelete, onStatusUpdate }) => {
   const [active, setActive] = useState(plan?.isActive);
 
   const handleToggle = async () => {
-    const newStatus = !active;
-    setActive(newStatus); // optimistic UI
+    const prev = active;
+    setActive(!prev); // optimistic UI
     try {
-      await onStatusUpdate(plan?._id, newStatus);
+      await onStatusUpdate(plan?._id);
     } catch (error) {
-      setActive(!newStatus); // rollback
+      setActive(prev); // rollback
       toast.error(error?.data?.message || "Failed to update status");
     }
   };
@@ -145,9 +145,9 @@ const Subscriptions = () => {
     }
   };
 
-  const handleStatusUpdate = async (id, isActive) => {
+  const handleStatusUpdate = async (id) => {
     try {
-      const res =  await updateStatus({ id, data:{ isActive } }).unwrap();
+      const res =  await updateStatus(id).unwrap();
       if(res?.success === true){
         toast.success("Update Status successfully");
         refetch();
