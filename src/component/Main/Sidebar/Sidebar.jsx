@@ -13,7 +13,7 @@ import { MdDashboard } from "react-icons/md";
 import { GiOpenBook } from "react-icons/gi";
 import { IoGift } from "react-icons/io5";
 import { BiSolidOffer } from "react-icons/bi";
-import { BsFillFileSpreadsheetFill } from "react-icons/bs";
+import { BsFillFileSpreadsheetFill, BsBoxSeam, BsBookHalf, BsCartCheck, BsJournalCheck, BsPersonCheck } from "react-icons/bs";
 
 const sidebarItems = [
   { path: "/", name: "Dashboard", icon: <MdDashboard className="size-6" /> },
@@ -25,6 +25,11 @@ const sidebarItems = [
   { path: "/subscriptions", name: "Subscriptions", icon: <FaCrown  className="size-6" /> },
   { path: "/coupon", name: "Coupon", icon: <BiSolidOffer  className="size-6" /> },
   { path: "/boosting", name: "Boosting", icon: <BsFillFileSpreadsheetFill   className="size-6" /> },
+  { path: "/listing-packages", name: "Listing Pkgs", icon: <BsBoxSeam className="size-6" /> },
+  { path: "/story-packages", name: "Story Pkgs", icon: <BsBookHalf className="size-6" /> },
+  { path: "/listing-purchases", name: "Listing Sales", icon: <BsCartCheck className="size-6" /> },
+  { path: "/story-purchases", name: "Story Sales", icon: <BsJournalCheck className="size-6" /> },
+  { path: "/user-subscriptions", name: "User Subs", icon: <BsPersonCheck className="size-6" /> },
   { path: "/Earnings", name: "Payments", icon: <RiMoneyDollarCircleFill className="size-6" /> },
   { path: "/settings", name: "Settings", icon: <IoSettingsSharp className="size-6" /> },
 ];

@@ -37,6 +37,11 @@ import EditSubscriptions from "../component/Main/editSubscriptions/editSubscript
 import UsersDetailes from "../component/Main/Users/usersDetailes";
 import Coupon from "../component/Main/Coupon/Coupon";
 import Boosting from "../component/Main/Boosting/Boosting";
+import ListingPackagesPage from "../page/ListingPackagesPage/ListingPackagesPage";
+import StoryPackagesPage from "../page/StoryPackagesPage/StoryPackagesPage";
+import ListingPurchasesPage from "../page/ListingPurchasesPage/ListingPurchasesPage";
+import StoryPurchasesPage from "../page/StoryPurchasesPage/StoryPurchasesPage";
+import UserSubscriptionsPage from "../page/UserSubscriptionsPage/UserSubscriptionsPage";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -70,6 +75,26 @@ const router = createBrowserRouter([
       {
         path: "Earnings",
         element: <EarningsPage />,
+      },
+      {
+        path: "listing-packages",
+        element: <ListingPackagesPage />,
+      },
+      {
+        path: "story-packages",
+        element: <StoryPackagesPage />,
+      },
+      {
+        path: "listing-purchases",
+        element: <ListingPurchasesPage />,
+      },
+      {
+        path: "story-purchases",
+        element: <StoryPurchasesPage />,
+      },
+      {
+        path: "user-subscriptions",
+        element: <UserSubscriptionsPage />,
       },
       {
         path: "stories",
