@@ -27,8 +27,7 @@ const StoreCard = ({ store }) => {
   const logoUrl = store.logo ? `${imageBaseUrl}${store.logo}` : null;
 
   return (
-    <Link
-      to={`/professional-stores/${store.id}`}
+    <div
       className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100"
     >
       <div className="relative h-[250px] w-full bg-gray-100">
@@ -66,7 +65,9 @@ const StoreCard = ({ store }) => {
           <div>
             <h3 className="text-[15px] font-bold">{store.name}</h3>
             <p className="text-[12px] text-gray-400">
-              {store.category ?? "Uncategorized"}
+              {typeof store.category === "object"
+                ? store.category?.title
+                : store.category ?? "Uncategorized"}
             </p>
           </div>
           <div className="text-right">
@@ -91,7 +92,7 @@ const StoreCard = ({ store }) => {
           </button>
         </div>
       </div>
-    </Link>
+    </div>
   );
 };
 
@@ -99,7 +100,7 @@ StoreCard.propTypes = {
   store: PropTypes.shape({
     id: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
-    category: PropTypes.string,
+    category: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
     totalProducts: PropTypes.number,
     banner: PropTypes.string,
     logo: PropTypes.string,
