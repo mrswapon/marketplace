@@ -55,7 +55,7 @@ const storesApi = baseApi.injectEndpoints({
     // STATUS TOGGLE (NEW)
     updateStoreStatus: builder.mutation({
       query: ({ id, status }) => ({
-        url: `/admin/stores/${id}/status`,
+        url: `/admin/stores/${id}/toggle-status`,
         method: "PATCH",
         body: { status },
       }),
@@ -71,15 +71,55 @@ const storesApi = baseApi.injectEndpoints({
       invalidatesTags: ["Stores"],
     }),
 
+    // GET STORE PRODUCTS
+    getStoreProducts: builder.query({
+      query: ({ id, page, limit, status, search }) => {
+        const params = new URLSearchParams();
+        params.append("page", page);
+        params.append("limit", limit);
+        if (status && status !== "all") params.append("status", status);
+        if (search) params.append("search", search);
+        return {
+          url: `/admin/stores/${id}/products?${params.toString()}`,
+          method: "GET",
+        };
+      },
+      transformResponse: (res) => res?.data,
+      providesTags: ["Stores"],
+    }),
+
+    // GET STORE ADS
+    getStoreAds: builder.query({
+      query: ({ id, page, limit }) => ({
+        url: `/admin/stores/${id}/ads?page=${page}&limit=${limit}`,
+        method: "GET",
+      }),
+      transformResponse: (res) => res?.data,
+      providesTags: ["Stores"],
+    }),
+
+    // GET STORE PAYMENTS
+    getStorePayments: builder.query({
+      query: ({ id, page, limit }) => ({
+        url: `/admin/stores/${id}/payments?page=${page}&limit=${limit}`,
+        method: "GET",
+      }),
+      transformResponse: (res) => res?.data,
+      providesTags: ["Stores"],
+    }),
+
   }),
 });
 
 export const {
-  useGetStoresStatsQuery,  
+  useGetStoresStatsQuery,
   useGetStoresQuery,
   useGetSingleStoreQuery,
   useAddStoreMutation,
   useUpdateStoreMutation,
   useDeleteStoreMutation,
   useUpdateStoreStatusMutation,
+  useGetStoreProductsQuery,
+  useGetStoreAdsQuery,
+  useGetStorePaymentsQuery,
 } = storesApi;
