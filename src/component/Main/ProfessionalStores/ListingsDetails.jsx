@@ -1,182 +1,163 @@
 import { useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { Mail, Phone, Calendar, ShieldCheck } from "lucide-react";
+import { toast } from "sonner";
+import { useGetSingleListingQuery, useUpdateListingStatusMutation, useDeleteListingMutation } from "../../../redux/features/listings/listingsApi";
+import { imageBaseUrl } from "../../../config/imageBaseUrl";
+
 const ListingsDetails = () => {
-    const IMAGES = [
-  "https://images.unsplash.com/photo-1614164185128-e4ec99c436d7?w=700&q=85",
-  "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=700&q=85",
-  "https://images.unsplash.com/photo-1587836374828-4dbafa94cf0e?w=700&q=85",
-  "https://images.unsplash.com/photo-1548169874-53e85f753f1e?w=700&q=85",
-  "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=700&q=85",
-  "https://images.unsplash.com/photo-1614164185128-e4ec99c436d7?w=700&q=85",
-];
-  const [active, setActive] = useState(0);
+  const { id, listingId } = useParams();
+  const navigate = useNavigate();
+  const { data: listing, isLoading } = useGetSingleListingQuery(listingId);
+  const [updateListingStatus] = useUpdateListingStatusMutation();
+  const [deleteListing] = useDeleteListingMutation();
+  const [selectedImage, setSelectedImage] = useState(0);
+
+  const images = listing?.media?.length > 0
+    ? listing.media.map((m) => `${imageBaseUrl}${m}`)
+    : ["https://picsum.photos/600/400"];
+
+  const handleApprove = async () => {
+    try {
+      await updateListingStatus({ id: listingId, status: "active" }).unwrap();
+      toast.success("Listing approved");
+      navigate(`/professional-stores/${id}/listing`);
+    } catch (error) {
+      toast.error(error?.data?.message || "Failed to approve");
+    }
+  };
+
+  const handleReject = async () => {
+    try {
+      await updateListingStatus({ id: listingId, status: "rejected" }).unwrap();
+      toast.success("Listing rejected");
+      navigate(`/professional-stores/${id}/listing`);
+    } catch (error) {
+      toast.error(error?.data?.message || "Failed to reject");
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      await deleteListing(listingId).unwrap();
+      toast.success("Listing deleted");
+      navigate(`/professional-stores/${id}/listing`);
+    } catch (error) {
+      toast.error(error?.data?.message || "Failed to delete");
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="animate-pulse space-y-4 p-5">
+        <div className="h-80 bg-gray-200 rounded-xl" />
+        <div className="h-6 w-48 bg-gray-200 rounded" />
+        <div className="h-4 w-32 bg-gray-100 rounded" />
+      </div>
+    );
+  }
+
+  if (!listing) {
+    return <p className="text-center py-10 text-gray-500">Listing not found.</p>;
+  }
+
   return (
-    <section className="p-4">
-    <div className="w-full md:flex justify-between">
-  
-  {/* LEFT: Image area */}
-  <div className="flex flex-col gap-3 w-full  md:w-[50%]">
-    
-    {/* Main image */}
-    <div className="rounded-lg overflow-hidden bg-gray-800 h-[300px]">
-      <img
-        src={IMAGES[active]}
-        alt="watch"
-        className="w-full h-full object-cover"
-      />
-    </div>
-
-    {/* Thumbnails */}
-    <div className="flex gap-3 overflow-hidden">
-      {IMAGES.map((src, i) => (
-        <button
-          key={i}
-          onClick={() => setActive(i)}
-          className={`w-[148px] h-[110px] rounded-lg overflow-hidden shrink-0 border-2 transition 
-            ${i === active ? "border-gray-900 opacity-100" : "border-transparent opacity-80"}
-          `}
-        >
+    <div className="flex flex-col lg:flex-row gap-6">
+      {/* Left: Images */}
+      <div className="lg:w-[60%]">
+        <div className="rounded-2xl overflow-hidden mb-3">
           <img
-            src={src}
-            alt=""
-            className="w-full h-full object-cover block"
+            crossOrigin="anonymous"
+            src={images[selectedImage]}
+            alt={listing.title}
+            className="w-full h-[400px] object-cover"
+            onError={(e) => { e.target.src = "https://picsum.photos/600/400"; }}
           />
-        </button>
-      ))}
-    </div>
-  </div>
-
-  {/* RIGHT: Seller panel */}
-  <div className="  w-full md:w-[30%]">
-    <div className="shadow rounded-md  p-7 md:px-7">
-    {/* Avatar + Name + Trust */}
-    <div className="flex items-start gap-3 mb-6">
-      
-      {/* Avatar */}
-      <div className="w-[46px] h-[46px] rounded-full bg-gray-200 border border-gray-300 flex items-center justify-center shrink-0">
-        <span className="text-[11px] text-gray-600 font-semibold">TH</span>
-      </div>
-
-      {/* Name */}
-      <div className="flex-1">
-        <div className="font-bold text-base text-gray-900 leading-tight">
-          TechHaven Pro
         </div>
-
-        <div className="inline-flex items-center bg-blue-50 rounded px-2 py-[2px] mt-1">
-          <span className="text-[11px] font-semibold text-blue-600 tracking-wide">
-            PROFESSIONAL STORE
-          </span>
-        </div>
-      </div>
-
-      {/* Trust */}
-      <div className="text-right shrink-0">
-        <div className="text-[11px] text-gray-400 mb-1">Trust Score</div>
-        <div className="flex items-center gap-1 justify-end">
-          <ShieldCheck className="w-4 h-4 text-green-500 stroke-[2.5]" />
-          <span className="font-bold text-[17px] text-green-600">98%</span>
-        </div>
-      </div>
-    </div>
-
-    {/* Contact rows */}
-    <div className="flex flex-col gap-5 mb-auto">
-      {[
-        { Icon: Mail, text: "m.chen@luxuryswiss.ch" },
-        { Icon: Phone, text: "+41 44 211 44 00" },
-        { Icon: Calendar, text: "Member since Oct 2019" },
-      ].map(({ Icon, text }, i) => (
-        <div key={i} className="flex items-center gap-3">
-          <Icon className="w-4 h-4 text-gray-500 stroke-[1.8]" />
-          <span className="text-sm text-gray-700">{text}</span>
-        </div>
-      ))}
-    </div>
-
-    {/* Buttons */}
-    <div className="flex gap-3 mt-8">
-      <button className="flex-1 py-[11px] rounded-lg border border-gray-300 bg-white text-gray-700 text-sm font-semibold hover:bg-gray-50 transition">
-        Cancel
-      </button>
-
-      <button className="flex-1 py-[11px] rounded-lg bg-[#1a3a2a] text-white text-sm font-semibold hover:opacity-90 transition">
-        Approve Listing
-      </button>
-    </div>
-    </div>
-  </div>
-</div>
- <br />
-
-    {/*  bottom section  */}
-    <div className="w-full md:w-[50%]  p-5 bg-white shadow rounded-lg text-gray-900 text-sm font-sans">
-      {/* Header */}
-      <div className="mb-2">
-        <div className="float-right flex items-center gap-1 text-orange-500 text-xs font-semibold tracking-wide">
-          <span className="w-2 h-2 rounded-full bg-orange-500 inline-block" />
-          PENDING REVIEW
-        </div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-1 clear-both">Rolex Submariner 2022</h2>
-        <div className="text-xl font-bold text-blue-600 mb-1">$14,500.00</div>
-        <div className="text-gray-500 text-xs flex items-center gap-1">
-          ⊙ Zurich, Switzerland
-        </div>
-      </div>
-
-      {/* Meta Grid */}
-      <div className="grid grid-cols-4 border-t border-b border-gray-200 py-3 my-4">
-        {[
-          { label: "CATEGORY", value: "Luxury", sub: "Watches" },
-          { label: "CONDITION", value: "Mint", sub: "(Unworn)" },
-          { label: "SHIPPING", value: "Insured", sub: "Global" },
-          { label: "LISTED", value: "2h ago", sub: "" },
-        ].map(({ label, value, sub }) => (
-          <div key={label}>
-            <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">{label}</div>
-            <div className="text-sm font-semibold text-gray-900">{value}</div>
-            {sub && <div className="text-xs text-gray-500">{sub}</div>}
-          </div>
-        ))}
-      </div>
-
-      {/* Description */}
-      <div className="text-sm font-bold mb-2">Description</div>
-      <p className="text-xs text-gray-600 leading-relaxed">
-        For sale is a pristine, 2022 Rolex Submariner Date (Ref: 126610LN). This timepiece was
-        purchased from an authorized dealer and has never been worn. It comes with the full set
-        including the original green box, outer white box, green and white hangtags, and the
-        international warranty card valid until 2027. The 41 mm Oystersteel case is perfectly
-        proportioned and houses the caliber 3235 movement with a 70-hour power reserve.
-      </p>
-      <button className="text-blue-600 text-xs mt-2 bg-transparent border-none cursor-pointer p-0">
-        Expand Description ▾
-      </button>
-
-      <hr className="border-t border-gray-200 my-5" />
-
-      {/* Specifications */}
-      <div className="text-sm font-bold mb-2">Specifications</div>
-      <div className="bg-[#F1F3F2] rounded-lg p-3">
-        <table className="w-full border-collapse ">
-        <tbody>
-          {[
-            ["Brand", "Rolex", "Model", "Submariner Date"],
-            ["Material", "Oystersteel", "Year", "2022"],
-            ["Reference", "126610LN", "Movement", "Automatic 3235"],
-          ].map((row, i) => (
-            <tr key={i} className="border-t border-b border-gray-200">
-              <td className="py-3 px-2 text-xs text-gray-400 w-[30%]">{row[0]}</td>
-              <td className="py-3 px-2 text-xs font-semibold text-gray-900 w-[20%]">{row[1]}</td>
-              <td className="py-3 px-2 text-xs text-gray-400 w-[25%]">{row[2]}</td>
-              <td className="py-3 px-2 text-xs font-semibold text-gray-900 w-[25%]">{row[3]}</td>
-            </tr>
+        <div className="flex gap-2 overflow-x-auto">
+          {images.map((img, idx) => (
+            <img
+              key={idx}
+              crossOrigin="anonymous"
+              src={img}
+              alt={`thumb-${idx}`}
+              className={`w-16 h-16 rounded-lg object-cover cursor-pointer border-2 ${selectedImage === idx ? "border-[#0F3D2E]" : "border-transparent"}`}
+              onClick={() => setSelectedImage(idx)}
+              onError={(e) => { e.target.src = "https://picsum.photos/64"; }}
+            />
           ))}
-        </tbody>
-      </table>
+        </div>
+      </div>
+
+      {/* Right: Details */}
+      <div className="lg:w-[40%] space-y-5">
+        {/* Seller */}
+        <div className="bg-white rounded-2xl border border-gray-100 p-4">
+          <div className="flex items-center gap-3 mb-3">
+            <img
+              crossOrigin="anonymous"
+              src={listing.seller?.avatarUrl ? `${imageBaseUrl}${listing.seller.avatarUrl}` : "https://picsum.photos/40"}
+              className="w-10 h-10 rounded-full object-cover"
+              onError={(e) => { e.target.src = "https://picsum.photos/40"; }}
+            />
+            <div>
+              <p className="font-semibold text-gray-900 text-sm">{listing.seller?.firstName} {listing.seller?.lastName}</p>
+              <p className="text-xs text-gray-400">{listing.store?.name || "—"}</p>
+            </div>
+          </div>
+          <div className="space-y-1.5 text-xs text-gray-500">
+            {listing.seller?.email && <div className="flex items-center gap-2"><Mail size={12} /> {listing.seller.email}</div>}
+            {listing.seller?.phone && <div className="flex items-center gap-2"><Phone size={12} /> {listing.seller.phone}</div>}
+            <div className="flex items-center gap-2"><ShieldCheck size={12} /> Trust Score: {listing.store?.avgRating?.toFixed(1) || "N/A"}</div>
+          </div>
+        </div>
+
+        {/* Listing Info */}
+        <div className="bg-white rounded-2xl border border-gray-100 p-4">
+          <h2 className="text-xl font-bold text-gray-900 mb-1">{listing.title}</h2>
+          <p className="text-2xl font-bold text-[#0F3D2E] mb-3">{listing.currency || "$"} {listing.price?.toLocaleString()}</p>
+
+          <div className="grid grid-cols-2 gap-2 text-sm">
+            <div className="text-gray-400">Category</div>
+            <div className="text-gray-900 font-medium">{listing.category?.title || listing.category_name || "—"}</div>
+            <div className="text-gray-400">Condition</div>
+            <div className="text-gray-900 font-medium capitalize">{listing.condition || "—"}</div>
+            <div className="text-gray-400">Status</div>
+            <div className="text-gray-900 font-medium capitalize">{listing.status || "—"}</div>
+            <div className="text-gray-400">Listed</div>
+            <div className="flex items-center gap-1 text-gray-900 font-medium">
+              <Calendar size={12} />
+              {listing.createdAt ? new Date(listing.createdAt).toLocaleDateString() : "—"}
+            </div>
+          </div>
+        </div>
+
+        {/* Description */}
+        {listing.description && (
+          <div className="bg-white rounded-2xl border border-gray-100 p-4">
+            <h3 className="font-semibold text-gray-900 mb-2">Description</h3>
+            <p className="text-sm text-gray-600 leading-relaxed">{listing.description}</p>
+          </div>
+        )}
+
+        {/* Actions */}
+        <div className="flex gap-3">
+          {(listing.status === "draft" || listing.status === "pending") && (
+            <>
+              <button onClick={handleReject} className="flex-1 py-2.5 rounded-xl border border-red-200 text-red-500 text-sm font-semibold hover:bg-red-50 transition">
+                Reject
+              </button>
+              <button onClick={handleApprove} className="flex-1 py-2.5 rounded-xl text-white text-sm font-semibold hover:opacity-90 transition" style={{ background: "#0F3D2E" }}>
+                Approve Listing
+              </button>
+            </>
+          )}
+          <button onClick={handleDelete} className="py-2.5 px-4 rounded-xl border border-gray-200 text-gray-500 text-sm font-semibold hover:bg-gray-50 transition">
+            Delete
+          </button>
+        </div>
       </div>
     </div>
-    </section>
   );
 };
 

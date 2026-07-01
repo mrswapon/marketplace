@@ -1,174 +1,156 @@
-import { ConfigProvider, Table } from "antd";
-import { Link, useParams } from "react-router-dom";
-import { Check, X, Eye } from "lucide-react";
+import { useState } from "react";
+import { useParams, useNavigate, useOutletContext } from "react-router-dom";
+import { Table, ConfigProvider, Tag } from "antd";
+import { IoEyeSharp } from "react-icons/io5";
+import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
+import { toast } from "sonner";
+import { useGetStoreProductsQuery } from "../../../redux/features/Stores/Stores";
+import { useUpdateListingStatusMutation } from "../../../redux/features/listings/listingsApi";
+import { imageBaseUrl } from "../../../config/imageBaseUrl";
 
-const dataSource = [
-  {
-    key: "1",
-    image: "🎧",
-    imgBg: "bg-gray-800",
-    title: "Pro Audio Headphones X1",
-    id: "SLX-7829-01",
-    category: "Electronics",
-    seller: "TechHaven Pro",
-    price: "$299.00",
-    status: "Pending",
-  },
-  {
-    key: "2",
-    image: "⌚",
-    imgBg: "bg-gray-100",
-    title: "Minimalist White Watch",
-    id: "SLX-2241-99",
-    category: "Accessories",
-    seller: "TechHaven Pro",
-    price: "$145.00",
-    status: "Pending",
-  },
-  {
-    key: "3",
-    image: "👟",
-    imgBg: "bg-gray-200",
-    title: "Urban Classic Sneakers",
-    id: "SLX-5510-32",
-    category: "Footwear",
-    seller: "TechHaven Pro",
-    price: "$89.00",
-    status: "Pending",
-  },
-  {
-    key: "4",
-    image: "👟",
-    imgBg: "bg-red-100",
-    title: "Ultra-Light Sprint Shoes",
-    id: "SLX-0091-11",
-    category: "Sportswear",
-    seller: "TechHaven Pro",
-    price: "$120.00",
-    status: "Approved",
-  },
-];
+const filterToStatus = {
+  All: "all",
+  Pending: "draft",
+  Active: "active",
+  Rejected: "rejected",
+  Sold: "sold",
+  Expired: "expired",
+};
 
-
+const statusColors = {
+  active: "green",
+  draft: "orange",
+  pending: "orange",
+  rejected: "red",
+  sold: "blue",
+  expired: "default",
+};
 
 const ListingsPro = () => {
-  const {id} = useParams();
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { storeId } = useOutletContext();
+  const resolvedId = id || storeId;
+
+  const [page, setPage] = useState(1);
+  const [filter, setFilter] = useState("All");
+  const pageSize = 10;
+
+  const { data, isFetching } = useGetStoreProductsQuery({
+    id: resolvedId,
+    page,
+    limit: pageSize,
+    status: filterToStatus[filter],
+  });
+
+  const [updateListingStatus] = useUpdateListingStatusMutation();
+
+  const handleApprove = async (record) => {
+    try {
+      await updateListingStatus({ id: record.id || record._id, status: "active" }).unwrap();
+      toast.success("Listing approved");
+    } catch (error) {
+      toast.error(error?.data?.message || "Failed to approve");
+    }
+  };
+
+  const handleReject = async (record) => {
+    try {
+      await updateListingStatus({ id: record.id || record._id, status: "rejected" }).unwrap();
+      toast.success("Listing rejected");
+    } catch (error) {
+      toast.error(error?.data?.message || "Failed to reject");
+    }
+  };
+
+  const dataSource = (data?.items ?? []).map((item) => ({
+    key: item.id || item._id,
+    ...item,
+  }));
+
   const columns = [
-  {
-    title: "IMAGE",
-    dataIndex: "image",
-    key: "image",
-    render: (_, record) => (
-      <div
-        className={`w-12 h-12 rounded-xl ${record.imgBg} flex items-center justify-center text-2xl`}
-      >
-        {record.image}
-      </div>
-    ),
-  },
-  {
-    title: "LISTING TITLE",
-    dataIndex: "title",
-    key: "title",
-    render: (_, record) => (
-      <div>
-        <p className="font-semibold text-gray-900 text-sm">{record.title}</p>
-        <p className="text-gray-400 text-xs mt-0.5">ID: {record.id}</p>
-      </div>
-    ),
-  },
-  {
-    title: "CATEGORY",
-    dataIndex: "category",
-    key: "category",
-    render: (val) => <span className="text-gray-600 text-sm">{val}</span>,
-  },
-  {
-    title: "SELLER",
-    dataIndex: "seller",
-    key: "seller",
-    render: (val) => (
-      <div className="flex items-center gap-2 text-gray-700 text-sm">
-        <span className="text-blue-500 text-base">⊕</span>
-        {val}
-      </div>
-    ),
-  },
-  {
-    title: "PRICE",
-    dataIndex: "price",
-    key: "price",
-    render: (val) => (
-      <span className="font-semibold text-gray-900 text-sm">{val}</span>
-    ),
-  },
-  {
-    title: "STATUS",
-    dataIndex: "status",
-    key: "status",
-    render: (val) => {
-      const isPending = val === "Pending";
-      return (
-        <span
-          className={`flex items-center gap-1.5 text-xs font-medium ${
-            isPending ? "text-amber-500" : "text-green-600"
-          }`}
-        >
-          <span
-            className={`w-2 h-2 rounded-full inline-block ${
-              isPending ? "bg-amber-400" : "bg-green-500"
-            }`}
-          />
-          {val}
-        </span>
-      );
+    {
+      title: "Image",
+      dataIndex: "thumbnail",
+      render: (thumbnail) => (
+        <img
+          crossOrigin="anonymous"
+          src={thumbnail ? `${imageBaseUrl}${thumbnail}` : "https://picsum.photos/40"}
+          onError={(e) => { e.target.src = "https://picsum.photos/40"; }}
+          className="w-10 h-10 rounded-lg object-cover"
+        />
+      ),
     },
-  },
-  {
-    title: "ACTIONS",
-    key: "actions",
-    render: (_, record) => (
-      <div className="flex items-center gap-3">
-        {record.status === "Pending" && (
-          <>
-            <button className="text-green-500 hover:text-green-600 transition-colors">
-              <Check size={16} strokeWidth={2.5} />
-            </button>
-            <button className="text-red-400 hover:text-red-500 transition-colors">
-              <X size={16} strokeWidth={2.5} />
-            </button>
-          </>
-        )}
-        <Link to={`/professional-stores/${id}/listing/${record.id}/`} className="text-gray-400 hover:text-gray-600 transition-colors">
-          <Eye size={16} />
-        </Link>
-      </div>
-    ),
-  },
-];
+    { title: "Listing Title", dataIndex: "title", render: (t) => <span className="font-medium">{t}</span> },
+    { title: "Category", dataIndex: "category_name" },
+    {
+      title: "Price",
+      dataIndex: "price",
+      render: (price, record) => <span className="font-semibold">{record.currency || "$"} {price}</span>,
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      render: (s) => <Tag color={statusColors[s] || "default"}>{s?.toUpperCase()}</Tag>,
+    },
+    {
+      title: "Views",
+      dataIndex: "viewCount",
+      render: (v) => v ?? 0,
+    },
+    {
+      title: "Actions",
+      render: (_, record) => (
+        <div className="flex gap-3 text-lg">
+          <IoEyeSharp
+            className="text-gray-400 hover:text-blue-500 cursor-pointer"
+            onClick={() => navigate(`/professional-stores/${resolvedId}/listing/${record.id || record._id}`)}
+          />
+          {(record.status === "draft" || record.status === "pending") && (
+            <>
+              <FaCheckCircle className="text-gray-400 hover:text-green-500 cursor-pointer" onClick={() => handleApprove(record)} />
+              <FaTimesCircle className="text-gray-400 hover:text-red-500 cursor-pointer" onClick={() => handleReject(record)} />
+            </>
+          )}
+        </div>
+      ),
+    },
+  ];
+
   return (
-    <div className="w-full">
-      <ConfigProvider
-        theme={{
-          components: {
-            Table: {
-              headerBg: "#FFFFFF",
-              headerColor: "#9ca3af",
-              borderRadiusLG: 12,
-              fontSize: 12,
-            },
-          },
-        }}
-      >
+    <div>
+      {/* Filter Tabs */}
+      <div className="flex gap-1 mb-4 border-b">
+        {Object.keys(filterToStatus).map((label) => (
+          <button
+            key={label}
+            onClick={() => { setFilter(label); setPage(1); }}
+            className={`px-3 py-2 text-sm font-medium transition-colors ${
+              filter === label
+                ? "border-b-2 border-[#0F3D2E] text-[#0F3D2E]"
+                : "text-gray-500 hover:text-gray-700"
+            }`}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
+      <ConfigProvider theme={{ components: { Table: { headerBg: "#FFFFFF", headerColor: "#6B7280", borderRadiusLG: 10 } } }}>
         <Table
-          dataSource={dataSource}
+          loading={isFetching}
           columns={columns}
-          pagination={{
-            pageSize: 5,
-            position: ["bottomRight"],
-          }}
+          dataSource={dataSource}
+          rowKey="key"
           scroll={{ x: "max-content" }}
-          responsive={true}
+          pagination={{
+            current: page,
+            pageSize,
+            total: data?.pagination?.total || 0,
+            showSizeChanger: false,
+            showQuickJumper: true,
+            onChange: (p) => setPage(p),
+          }}
         />
       </ConfigProvider>
     </div>
